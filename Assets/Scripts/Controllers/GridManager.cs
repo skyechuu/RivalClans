@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,20 +26,10 @@ public class GridManager : MonoBehaviour {
 
 	void Start () {
         CreateGridMap();
-        var initialOccupyAmount = gridDimensionX * gridDimensionY * percentageOfInitiallyOccupiedGrids / 100;
-        for (int i = 0; i < initialOccupyAmount; i++)
-        {
-            int randomX, randomY;
-            do
-            {
-                randomX = Random.Range(0, gridDimensionX - 1);
-                randomY = Random.Range(0, gridDimensionY - 1);
-            }
-            while (grids[randomX, randomY].occupied);
-            BuildingManager.instance.Build(BuildingManager.instance.availableBuildings[1], grids[randomX, randomY]);
-        }
+        InitiallyOccupyGrids();
     }
-    
+
+
     void CreateGridMap()
     {
         grids = new Grid[gridDimensionX,gridDimensionY];
@@ -53,6 +44,22 @@ public class GridManager : MonoBehaviour {
                 go.GetComponent<Grid>().x = i;
                 go.GetComponent<Grid>().y = j;
             }
+        }
+    }
+
+    private void InitiallyOccupyGrids()
+    {
+        var initialOccupyAmount = gridDimensionX * gridDimensionY * percentageOfInitiallyOccupiedGrids / 100;
+        for (int i = 0; i < initialOccupyAmount; i++)
+        {
+            int randomX, randomY;
+            do
+            {
+                randomX = UnityEngine.Random.Range(0, gridDimensionX - 1);
+                randomY = UnityEngine.Random.Range(0, gridDimensionY - 1);
+            }
+            while (grids[randomX, randomY].occupied);
+            BuildingManager.instance.Build(BuildingManager.instance.availableBuildings[1], grids[randomX, randomY]);
         }
     }
 
