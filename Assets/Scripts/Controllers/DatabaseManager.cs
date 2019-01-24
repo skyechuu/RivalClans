@@ -23,4 +23,14 @@ public class DatabaseManager
             return instancedBuildings.Where(i => i.Key == instanceID).Select(s => s.Value) as Building;
         return null;
     }
+
+    public void PrintInstancedBuildings()
+    {
+        string result = "";
+        foreach(var item in instancedBuildings)
+        {
+            result += item.Key.ToString() + " : " + item.Value + "\n";
+        }
+        UnityEngine.Debug.Log(result);
+    }
 }

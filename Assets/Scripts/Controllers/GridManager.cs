@@ -208,8 +208,9 @@ public class GridManager : MonoBehaviour {
             for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
             {
                 if (grids[i, j] == instanceID)
-                    return new Object(instanceID);
+                    return SessionManager.instance.GetDatabaseManager().FindBuildingWithInstanceID(instanceID);
             }
         }
+        return null;
     }
 }
