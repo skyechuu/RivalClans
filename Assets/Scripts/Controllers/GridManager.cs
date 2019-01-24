@@ -8,28 +8,16 @@ public class GridManager : MonoBehaviour {
     public static GridManager instance;
 
     [Header("Settings")]
-    [SerializeField] int gridDimensionX = 20;
-    [SerializeField] int gridDimensionY = 20;
     [Range(0, 100)]
     [SerializeField] int percentageOfInitiallyOccupiedGrids = 10;
     [SerializeField] GameObject gridPrefab;
+    
+    [SerializeField] int[,] grids;
+    Grid[,] gridMap;
+    
 
 
-    Grid[,] grids;
-
-    private readonly int[,] allNeighbours = 
-        new int[8, 2] 
-        {
-            {0,1},
-            {1,1},
-            {1,0},
-            {1,-1},
-            {0,-1},
-            {-1,-1},
-            {-1,0},
-            {-1,1}
-        };
-
+   
     void Awake()
     {
         if (instance == null)
@@ -38,137 +26,190 @@ public class GridManager : MonoBehaviour {
 
 	void Start () {
         CreateGridMap();
-        InitiallyOccupyGrids();
+        //InitiallyOccupyGrids();
         
     }
 
-
     void CreateGridMap()
     {
-        grids = new Grid[gridDimensionX,gridDimensionY];
-        for (int i = 0; i < gridDimensionX; i++)
+        grids = new int[GameConstants.GRID_DIMENSION_X, GameConstants.GRID_DIMENSION_Y];
+        gridMap = new Grid[GameConstants.GRID_DIMENSION_X, GameConstants.GRID_DIMENSION_Y];
+        for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)
         {
-            for (int j = 0; j < gridDimensionY; j++)
+            for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
             {
-                Vector3 gridPosition = new Vector3(-gridDimensionX / 2 + 0.5f + i, 0, -gridDimensionY / 2 + 0.5f + j);
-                GameObject go = Instantiate(gridPrefab, gridPosition, Quaternion.identity, transform);
+                Vector3 position = new Vector3(-GameConstants.GRID_DIMENSION_X / 2 + 0.5f + i, 0, -GameConstants.GRID_DIMENSION_Y / 2 + 0.5f + j);
+                GameObject go = Instantiate(gridPrefab, position, Quaternion.identity, transform);
                 go.transform.name = "Grid[" + i + "," + j + "]";
-                grids[i, j] = go.GetComponent<Grid>();
-                go.GetComponent<Grid>().x = i;
-                go.GetComponent<Grid>().y = j;
+                gridMap[i, j] = go.GetComponent<Grid>();
+                grids[i, j] = 0;
             }
         }
     }
 
-    private void InitiallyOccupyGrids()
+    void VisualizeGridMap()
     {
-        var initialOccupyAmount = gridDimensionX * gridDimensionY * percentageOfInitiallyOccupiedGrids / 100;
+        for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)
+        {
+            for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
+            {
+                if (grids[i, j] == 0)
+                    gridMap[i, j].SetColor(Color.white);
+                else
+                {
+                    gridMap[i, j].SetColor(Color.yellow);
+                }
+            }
+        }
+    }
+
+    public void VisualizeGridMap(Coord position, int buildingSize, int instance)
+    {
+        for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)
+        {
+            for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
+            {
+                gridMap[i, j].SetColor(Color.white);
+                
+            }
+        }
+        for (int i = position.x; i < position.x + buildingSize; i++)
+        {
+            for (int j = position.y; j < position.y + buildingSize; j++)
+            {
+                if (grids[i, j] == 0 || grids[i, j] == instance)
+                    gridMap[i, j].SetColor(Color.green);
+                else
+                    gridMap[i, j].SetColor(Color.red);
+            }
+        }
+    }
+
+    void InitiallyOccupyGrids()
+    {
+        var initialOccupyAmount = GameConstants.GRID_DIMENSION_X * GameConstants.GRID_DIMENSION_Y * percentageOfInitiallyOccupiedGrids / 100;
         for (int i = 0; i < initialOccupyAmount; i++)
         {
             int randomX, randomY;
             do
             {
-                randomX = UnityEngine.Random.Range(0, gridDimensionX - 1);
-                randomY = UnityEngine.Random.Range(0, gridDimensionY - 1);
+                randomX = UnityEngine.Random.Range(0, GameConstants.GRID_DIMENSION_X - 1);
+                randomY = UnityEngine.Random.Range(0, GameConstants.GRID_DIMENSION_Y - 1);
             }
-            while (grids[randomX, randomY].occupied);
+            while (grids[randomX, randomY] != 0);
             //just set occupy later
-            BuildingManager.instance.Build(BuildingManager.instance.availableBuildings[1], grids[randomX, randomY]);
+            //BuildingManager.instance.Build(BuildingManager.instance.availableBuildings[1], grids[randomX, randomY]);
             //grids[randomX, randomY].SetOccupied(true);
         }
     }
 
     public void ClearGrid()
     {
-        foreach(Grid grid in grids)
-        {
-            grid.building = null;
-            grid.SetOccupied(false);
-        }
+        throw new NotImplementedException();
     }
 
-    public Grid GetGrid(float posX, float posY)
+    public int GetInstanceFromGrid(float posX, float posY)
     {
-        int x = (int)(posX - (-gridDimensionX / 2 + 0.5f));
-        int y = (int)(posY - (-gridDimensionY / 2 + 0.5f));
+        int x = (int)(posX - (-GameConstants.GRID_DIMENSION_X / 2 + 0.5f));
+        int y = (int)(posY - (-GameConstants.GRID_DIMENSION_Y / 2 + 0.5f));
         return grids[x, y];
     }
 
-    public Grid GetGrid(int x, int y)
+    public int GetInstanceFromGrid(int x, int y)
     {
         return grids[x, y];
     }
 
-    public Grid GetNeighbour(Grid center, int x, int y)
+    public bool IsAreaAvailable(Coord position, int buildingSize, int instance)
     {
-        if(center.x + x < gridDimensionX && center.x + x >= 0 && center.y + y < gridDimensionY && center.y + y >= 0)
-            return grids[center.x + x, center.y + y];
-        return null;
-    }
-    
-    public Grid GetTopNeighbour(Grid center)
-    {
-        return GetNeighbour(center, 0, 1);
-    }
-
-    public Grid GetBottomNeighbour(Grid center)
-    {
-        return GetNeighbour(center, 0, -1);
-    }
-
-    public Grid GetLeftNeighbour(Grid center)
-    {
-        return GetNeighbour(center, -1, 0);
-    }
-
-    public Grid GetRightNeighbour(Grid center)
-    {
-        return GetNeighbour(center, 1, 0);
-    }
-
-    public List<Grid> GetTwoByTwoGridArea(Grid center)
-    {
-        if (center.occupied)
-            return null;
-
-        List<Grid> grids = new List<Grid>();
-        int startIndex = 0;
-        for(int i = 0; i<startIndex+3; i++)
+        //print(position.ToString());
+        for (int i = position.x; i < position.x + buildingSize; i++)
         {
-            int x = allNeighbours[i%(allNeighbours.Length/2), 0];
-            int y = allNeighbours[i%(allNeighbours.Length/2), 1];
-            Grid neighbour = GetNeighbour(center, x, y);
-            //print("start i: "+startIndex+" x:" + x + " y:" + y + " result:"+neighbour);
-            if (neighbour == null || neighbour.occupied)
+            for (int j = position.y; j < position.y + buildingSize; j++)
             {
-                startIndex += 2;
-                i = startIndex-1;
-                grids.Clear();
-                if (startIndex > 6)
-                    return null;
-            }
-            else
-            {
-                grids.Add(neighbour);
-                if(grids.Count == 3)
+                if (i < 0 || i >= GameConstants.GRID_DIMENSION_X || j < 0 || j >= GameConstants.GRID_DIMENSION_Y)
                 {
-                    grids.Add(center);
-                    return grids;
+                    return false;
+                }
+                if (grids[i, j] != 0 && grids[i, j] != instance)
+                {
+                    return false;
                 }
             }
         }
-        return null;
+        return true;
     }
 
-    public void OccupyArea(List<Grid> area)
+    public void UpdateBuilding(Building building, UpdateType updateType)
     {
-        if (area != null)
+        var position = building.coord;
+        var buildingSize = building.GetSize();
+        if(updateType == UpdateType.NEW)
         {
-            foreach (Grid grid in area)
+            AddBuilding(building);
+        }
+        else if(updateType == UpdateType.REMOVE)
+        {
+            RemoveBuilding(building);
+        }
+        else if (updateType == UpdateType.CHANGE)
+        {
+            MoveBuilding(building);
+        }
+        Debug.LogWarning("Building "+building.name+" (" + building.GetInstanceID() + ") updated. Update Method: " + updateType.ToString());
+        VisualizeGridMap();
+    }
+
+    private void AddBuilding(Building building)
+    {
+        var position = building.coord;
+        var buildingSize = building.GetSize();
+        for (int i = position.x; i < position.x + buildingSize; i++)
+        {
+            for (int j = position.y; j < position.y + buildingSize; j++)
             {
-                grid.SetOccupied(true);
+                grids[i, j] = building.gameObject.GetInstanceID();
             }
         }
     }
 
+    private void RemoveBuilding(Building building)
+    {
+        var position = building.coord;
+        var buildingSize = building.GetSize();
+        for (int i = position.x; i < position.x + buildingSize; i++)
+        {
+            for (int j = position.y; j < position.y + buildingSize; j++)
+            {
+                grids[i, j] = 0;
+            }
+        }
+    }
+
+    private void MoveBuilding(Building building)
+    {
+        var position = building.coord;
+        var buildingSize = building.GetSize();
+        for (int i = 0; i < GameConstants.GRID_DIMENSION_Y; i++)
+        {
+            for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
+            {
+                if(grids[i, j] == building.gameObject.GetInstanceID())
+                    grids[i, j] = 0;
+            }
+        }
+        AddBuilding(building);
+    }
+
+    public Building GetBuilding(int instanceID)
+    {
+        for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)
+        {
+            for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
+            {
+                if (grids[i, j] == instanceID)
+                    return new Object(instanceID);
+            }
+        }
+    }
 }
