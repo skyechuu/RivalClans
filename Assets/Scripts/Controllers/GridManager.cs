@@ -17,6 +17,18 @@ public class GridManager : MonoBehaviour {
 
     Grid[,] grids;
 
+    private readonly int[,] allNeighbours = 
+        new int[8, 2] 
+        {
+            {0,1},
+            {1,1},
+            {1,0},
+            {1,-1},
+            {0,-1},
+            {-1,-1},
+            {-1,0},
+            {-1,1}
+        };
 
     void Awake()
     {
@@ -27,6 +39,7 @@ public class GridManager : MonoBehaviour {
 	void Start () {
         CreateGridMap();
         InitiallyOccupyGrids();
+        
     }
 
 
@@ -59,7 +72,9 @@ public class GridManager : MonoBehaviour {
                 randomY = UnityEngine.Random.Range(0, gridDimensionY - 1);
             }
             while (grids[randomX, randomY].occupied);
+            //just set occupy later
             BuildingManager.instance.Build(BuildingManager.instance.availableBuildings[1], grids[randomX, randomY]);
+            //grids[randomX, randomY].SetOccupied(true);
         }
     }
 
@@ -84,31 +99,76 @@ public class GridManager : MonoBehaviour {
         return grids[x, y];
     }
 
-    public Grid GetNeighbour(Grid root, int x, int y)
+    public Grid GetNeighbour(Grid center, int x, int y)
     {
-        if(root.x + x <= gridDimensionX && root.x + x >= 0 && root.y + y <= gridDimensionY && root.y + y >= 0)
-            return grids[root.x + x, root.y + y];
+        if(center.x + x < gridDimensionX && center.x + x >= 0 && center.y + y < gridDimensionY && center.y + y >= 0)
+            return grids[center.x + x, center.y + y];
         return null;
     }
     
-    public Grid GetTopNeighbour(Grid root)
+    public Grid GetTopNeighbour(Grid center)
     {
-        return GetNeighbour(root, 0, 1);
+        return GetNeighbour(center, 0, 1);
     }
 
-    public Grid GetBottomNeighbour(Grid root)
+    public Grid GetBottomNeighbour(Grid center)
     {
-        return GetNeighbour(root, 0, -1);
+        return GetNeighbour(center, 0, -1);
     }
 
-    public Grid GetLeftNeighbour(Grid root)
+    public Grid GetLeftNeighbour(Grid center)
     {
-        return GetNeighbour(root, -1, 0);
+        return GetNeighbour(center, -1, 0);
     }
 
-    public Grid GetRightNeighbour(Grid root)
+    public Grid GetRightNeighbour(Grid center)
     {
-        return GetNeighbour(root, 1, 0);
+        return GetNeighbour(center, 1, 0);
+    }
+
+    public List<Grid> GetTwoByTwoGridArea(Grid center)
+    {
+        if (center.occupied)
+            return null;
+
+        List<Grid> grids = new List<Grid>();
+        int startIndex = 0;
+        for(int i = 0; i<startIndex+3; i++)
+        {
+            int x = allNeighbours[i%(allNeighbours.Length/2), 0];
+            int y = allNeighbours[i%(allNeighbours.Length/2), 1];
+            Grid neighbour = GetNeighbour(center, x, y);
+            //print("start i: "+startIndex+" x:" + x + " y:" + y + " result:"+neighbour);
+            if (neighbour == null || neighbour.occupied)
+            {
+                startIndex += 2;
+                i = startIndex-1;
+                grids.Clear();
+                if (startIndex > 6)
+                    return null;
+            }
+            else
+            {
+                grids.Add(neighbour);
+                if(grids.Count == 3)
+                {
+                    grids.Add(center);
+                    return grids;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void OccupyArea(List<Grid> area)
+    {
+        if (area != null)
+        {
+            foreach (Grid grid in area)
+            {
+                grid.SetOccupied(true);
+            }
+        }
     }
 
 }

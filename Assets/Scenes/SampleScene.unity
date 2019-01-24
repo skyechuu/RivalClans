@@ -390,7 +390,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f31d3ab54ca1ed44c887374a2ef69441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGridx: {fileID: 0}
+  firstGrid: {fileID: 0}
+  onGrid: {fileID: 0}
   selectedBuilding: {fileID: 0}
   groundLayer:
     serializedVersion: 2
@@ -664,7 +665,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridDimensionX: 20
   gridDimensionY: 20
-  percentageOfInitiallyOccupiedGrids: 20
+  percentageOfInitiallyOccupiedGrids: 10
   gridPrefab: {fileID: 1452652592552840, guid: c3858666e06fd314697ec347183555a2, type: 2}
 --- !u!65 &2063255810
 BoxCollider:

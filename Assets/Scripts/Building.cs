@@ -9,12 +9,4 @@ public class Building : MonoBehaviour {
     public string buildingName;
     public Resource buildCost;
     public Resource produces;
-
-    public Vector3 GetPinPoint()
-    {
-        if (category == BuildingCategory.Category2)
-            return transform.position - new Vector3(0.5f, 0, 0.5f);
-        return transform.position;
-    }
-
 }

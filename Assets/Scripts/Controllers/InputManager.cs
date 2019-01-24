@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class InputManager : MonoBehaviour {
 
     public static InputManager instance;
 
     [Header("Debug")]
-    [SerializeField] Grid onGridx;
+    [SerializeField] Grid firstGrid;
+    [SerializeField] Grid onGrid;
     [SerializeField] Building selectedBuilding;
 
     [Header("Layers")]
@@ -29,6 +31,15 @@ public class InputManager : MonoBehaviour {
 
         if (IsInputEnded)
         {
+            if(moving)
+            {
+                if (firstGrid == onGrid)
+                    CancelMoveState();
+                else
+                {
+                    
+                }
+            }
             moving = false;
             buildingGrabOffset = Vector3.zero;
         }
@@ -39,8 +50,7 @@ public class InputManager : MonoBehaviour {
             {
                 if (moving)
                 {
-                    onGridx = hit.transform.GetComponent<Grid>();
-                    BuildingManager.instance.MoveBuilding(selectedBuilding, onGridx, buildingGrabOffset);
+                    onGrid = hit.transform.GetComponent<Grid>();
                 }
             }
         }
@@ -49,34 +59,49 @@ public class InputManager : MonoBehaviour {
         {
             if (OnGrid())
             {
-                if (onGridx)
+                firstGrid = hit.transform.GetComponent<Grid>();
+                if (onGrid)
                 {
                     if (SameGridClicked())
                     {
-                        moving = true;
-                        buildingGrabOffset = selectedBuilding.transform.position - onGridx.transform.position;
+                        StartMoveState();
                     }
                     else if (SameBuildingSelected())
                     {
-                        onGridx = hit.transform.GetComponent<Grid>();
-                        moving = true;
-                        buildingGrabOffset = selectedBuilding.transform.position - onGridx.transform.position;
+                        onGrid = hit.transform.GetComponent<Grid>();
+                        StartMoveState();
                     }
                     else
                     {
-                        onGridx = hit.transform.GetComponent<Grid>();
-                        selectedBuilding = onGridx.building;
+                        SelectGrid();
                     }
                 }
                 else
                 {
-                    onGridx = hit.transform.GetComponent<Grid>();
-                    selectedBuilding = onGridx.building;
+                    SelectGrid();
                 }
             }
         }
 
 	}
+
+    private void SelectGrid()
+    {
+        onGrid = hit.transform.GetComponent<Grid>();
+        selectedBuilding = onGrid.building;
+    }
+
+    private void CancelMoveState()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void StartMoveState()
+    {
+        moving = true;
+        if(selectedBuilding && onGrid)
+            buildingGrabOffset = selectedBuilding.transform.position - onGrid.transform.position;
+    }
 
     bool NoInputExists
     {
@@ -156,7 +181,7 @@ public class InputManager : MonoBehaviour {
 
     bool SameGridClicked()
     {
-        return onGridx == hit.transform.GetComponent<Grid>();
+        return onGrid == hit.transform.GetComponent<Grid>();
     }
 
     bool SameBuildingSelected()
