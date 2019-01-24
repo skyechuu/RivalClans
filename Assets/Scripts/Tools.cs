@@ -20,4 +20,9 @@ public static class Tools
         int y = (int)(worldPosition.z - (-GameConstants.GRID_DIMENSION_Y / 2 + (buildingSize / 2.0f)));
         return new Coord(x, y);
     }
+
+    public static bool IsIndexInGridDimensions(int i, int j)
+    {
+        return i >= 0 && i < GameConstants.GRID_DIMENSION_X && j >= 0 && j < GameConstants.GRID_DIMENSION_X;
+    }
 }

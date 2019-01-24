@@ -88,7 +88,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: ffb536563e2729d43a979291af292bdb, type: 2}
+  - {fileID: 2100000, guid: e783d3eba7f9a864f93036d673202085, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -153,5 +153,11 @@ MonoBehaviour:
   category: 1
   buildingState: 0
   buildingName: 2x2
-  buildCost: {fileID: 0}
-  produces: {fileID: 0}
+  buildCost:
+    wood: 7
+    rock: 5
+    coin: 60
+  produces:
+    wood: 0
+    rock: 0
+    coin: 10

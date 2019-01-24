@@ -8,16 +8,13 @@ public class GridManager : MonoBehaviour {
     public static GridManager instance;
 
     [Header("Settings")]
-    [Range(0, 100)]
+    [Range(0, 50)]
     [SerializeField] int percentageOfInitiallyOccupiedGrids = 10;
     [SerializeField] GameObject gridPrefab;
     
-    [SerializeField] int[,] grids;
+    int[,] grids;
     Grid[,] gridMap;
     
-
-
-   
     void Awake()
     {
         if (instance == null)
@@ -45,6 +42,7 @@ public class GridManager : MonoBehaviour {
                 grids[i, j] = 0;
             }
         }
+        GetComponent<BoxCollider>().size = new Vector3(GameConstants.GRID_DIMENSION_X * GameConstants.GRID_UNIT, 0.1f, GameConstants.GRID_DIMENSION_Y * GameConstants.GRID_UNIT);
     }
 
     public void VisualizeGridMap()
@@ -65,28 +63,38 @@ public class GridManager : MonoBehaviour {
 
     public void VisualizeGridMap(Coord position, int buildingSize, int instance)
     {
+        ClearGrid();
+        for (int i = position.x; i < position.x + buildingSize; i++)
+        {
+            for (int j = position.y; j < position.y + buildingSize; j++)
+            {
+                if(Tools.IsIndexInGridDimensions(i, j))
+                {
+                    if ((grids[i, j] == 0 || grids[i, j] == instance) && Tools.IsIndexInGridDimensions(i,j))
+                        gridMap[i, j].SetColor(Color.green);
+                    else
+                        gridMap[i, j].SetColor(Color.red);
+                }
+            }
+        }
+    }
+
+    public void ClearGrid()
+    {
         for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)
         {
             for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
             {
                 gridMap[i, j].SetColor(Color.white);
-                
-            }
-        }
-        for (int i = position.x; i < position.x + buildingSize; i++)
-        {
-            for (int j = position.y; j < position.y + buildingSize; j++)
-            {
-                if (grids[i, j] == 0 || grids[i, j] == instance)
-                    gridMap[i, j].SetColor(Color.green);
-                else
-                    gridMap[i, j].SetColor(Color.red);
             }
         }
     }
 
     void InitiallyOccupyGrids()
     {
+        if (percentageOfInitiallyOccupiedGrids == 0)
+            return;
+
         var initialOccupyAmount = GameConstants.GRID_DIMENSION_X * GameConstants.GRID_DIMENSION_Y * percentageOfInitiallyOccupiedGrids / 100;
         var occupied = 0;
         while (occupied != initialOccupyAmount)
@@ -96,7 +104,7 @@ public class GridManager : MonoBehaviour {
             Coord coord = FindRandomArea(building);
             
             BuildingManager.instance.Build(building, coord);
-            occupied += (int)Mathf.Sqrt(building.GetSize());
+            occupied += (int)Mathf.Pow(building.GetSize(), 2);
         }
     }
 
@@ -109,11 +117,6 @@ public class GridManager : MonoBehaviour {
             return FindRandomArea(b);
         }
         return new Coord(x, y);
-    }
-
-    public void ClearGrid()
-    {
-        throw new NotImplementedException();
     }
 
     public int GetInstanceFromGrid(float posX, float posY)

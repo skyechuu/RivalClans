@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 
 public class Building : MonoBehaviour, IMoveable {
 
@@ -15,17 +11,56 @@ public class Building : MonoBehaviour, IMoveable {
 
     private Coord oldCoord;
 
-    public int GetSize()
+    private float cooldown = 10;
+    private float nextTick = 0;
+    
+    void Update()
     {
-        switch (category)
+        HandleProduce();
+    }
+
+    void HandleProduce()
+    {
+        if (buildingState != BuildingState.CONSTRUCTION)
         {
-            case BuildingCategory.Category1:
-                return 1;   // 1x1
-            case BuildingCategory.Category2:
-                return 2;   // 2x2
-            default:
-                return 0;
+            if(Time.time > nextTick)
+            {
+                ProduceResource();
+                nextTick = Time.time + cooldown;
+            }
         }
+    }
+
+    ResourceType SelectRandomResourceType()
+    {
+        int random = Random.Range(0, 3);
+        return (ResourceType) random;
+    }
+
+    void ProduceResource()
+    {
+        ResourceType type;
+        if(category == BuildingCategory.Category2)
+            type = ResourceType.COIN;
+        else
+            type = SelectRandomResourceType();
+
+        int value = 0;
+        switch (type)
+        {
+            case ResourceType.COIN:
+                value = produces.coin;
+                break;
+            case ResourceType.ROCK:
+                value = produces.rock;
+                break;
+            case ResourceType.WOOD:
+                value = produces.wood;
+                break;
+            default:
+                break;
+        }
+        ResourcesManager.instance.GetTotalResources().AddResource(value, type);
     }
 
     public void OnMoveStarted()
@@ -38,8 +73,17 @@ public class Building : MonoBehaviour, IMoveable {
     {
         if(position != transform.position)
         {
-            SetPosition(Tools.GetGridPosition(position, GetSize()));
-            GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
+            Coord _coord = Tools.GetGridCoord(position, GetSize());
+            bool available = GridManager.instance.IsAreaAvailable(_coord, GetSize(), gameObject.GetInstanceID());
+            if (available)
+            {
+                SetPosition(Tools.GetGridPosition(position, GetSize()));
+                GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
+            }
+            else
+            {
+                print(false);
+            }
         }
     }
 
@@ -78,6 +122,19 @@ public class Building : MonoBehaviour, IMoveable {
     {
         transform.position = Tools.GetWorldPosition(_coord, GetSize());
         coord = _coord;
+    }
+
+    public int GetSize()
+    {
+        switch (category)
+        {
+            case BuildingCategory.Category1:
+                return 1;   // 1x1
+            case BuildingCategory.Category2:
+                return 2;   // 2x2
+            default:
+                return 0;
+        }
     }
 
 }

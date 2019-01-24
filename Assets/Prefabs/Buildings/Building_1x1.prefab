@@ -153,5 +153,11 @@ MonoBehaviour:
   category: 0
   buildingState: 0
   buildingName: 1x1
-  buildCost: {fileID: 0}
-  produces: {fileID: 0}
+  buildCost:
+    wood: 20
+    rock: 3
+    coin: 20
+  produces:
+    wood: 20
+    rock: 50
+    coin: 20

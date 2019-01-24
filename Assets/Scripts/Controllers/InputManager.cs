@@ -11,8 +11,7 @@ public class InputManager : MonoBehaviour {
     [Header("Layers")]
     [SerializeField] LayerMask groundLayer;
     [SerializeField] LayerMask buildingLayer;
-
-    Vector3 firstPosition;
+    
     Vector3 delta;
     RaycastHit hit;
 
@@ -30,6 +29,21 @@ public class InputManager : MonoBehaviour {
         HandleInput();
         
 	}
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(hit.point, 0.5f);
+        Gizmos.color = Color.red;
+        if (selectedBuilding)
+        {
+            Gizmos.DrawWireSphere(hit.point - delta, 0.5f);
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(Tools.GetGridPosition(hit.point - delta, selectedBuilding.GetSize()), 0.5f);
+        }
+
+    }
+
 
     private void HandleInput()
     {
@@ -100,6 +114,7 @@ public class InputManager : MonoBehaviour {
                 selectedBuilding.OnCancelMove();
         }
     }
+
     private bool IsSameBuilding()
     {
         return hit.transform.GetComponent<Building>() == selectedBuilding;
@@ -153,20 +168,6 @@ public class InputManager : MonoBehaviour {
 #else
         get { return Input.GetTouch(0).phase == TouchPhase.Ended; }
 #endif
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.white;
-        Gizmos.DrawWireSphere(hit.point, 0.2f);
-        Gizmos.color = Color.red;
-        if (selectedBuilding)
-        {
-            Gizmos.DrawWireSphere(hit.point - delta, 0.2f);
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(Tools.GetGridPosition(hit.point - delta, selectedBuilding.GetSize()), 0.2f);
-        }
-
     }
 
     bool IsOnGround()
