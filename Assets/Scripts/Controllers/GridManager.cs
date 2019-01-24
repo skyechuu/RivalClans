@@ -26,7 +26,7 @@ public class GridManager : MonoBehaviour {
 
 	void Start () {
         CreateGridMap();
-        //InitiallyOccupyGrids();
+        InitiallyOccupyGrids();
         
     }
 
@@ -47,7 +47,7 @@ public class GridManager : MonoBehaviour {
         }
     }
 
-    void VisualizeGridMap()
+    public void VisualizeGridMap()
     {
         for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)
         {
@@ -88,19 +88,27 @@ public class GridManager : MonoBehaviour {
     void InitiallyOccupyGrids()
     {
         var initialOccupyAmount = GameConstants.GRID_DIMENSION_X * GameConstants.GRID_DIMENSION_Y * percentageOfInitiallyOccupiedGrids / 100;
-        for (int i = 0; i < initialOccupyAmount; i++)
+        var occupied = 0;
+        while (occupied != initialOccupyAmount)
         {
-            int randomX, randomY;
-            do
-            {
-                randomX = UnityEngine.Random.Range(0, GameConstants.GRID_DIMENSION_X - 1);
-                randomY = UnityEngine.Random.Range(0, GameConstants.GRID_DIMENSION_Y - 1);
-            }
-            while (grids[randomX, randomY] != 0);
-            //just set occupy later
-            //BuildingManager.instance.Build(BuildingManager.instance.availableBuildings[1], grids[randomX, randomY]);
-            //grids[randomX, randomY].SetOccupied(true);
+            var buildingIndex = (initialOccupyAmount - occupied > 3) ? UnityEngine.Random.Range(0, BuildingManager.instance.availableBuildings.Count) : 0;
+            var building = BuildingManager.instance.availableBuildings[buildingIndex];
+            Coord coord = FindRandomArea(building);
+            
+            BuildingManager.instance.Build(building, coord);
+            occupied += (int)Mathf.Sqrt(building.GetSize());
         }
+    }
+
+    Coord FindRandomArea(Building b)
+    {
+        int x, y;
+        x = UnityEngine.Random.Range(0, GameConstants.GRID_DIMENSION_X);
+        y = UnityEngine.Random.Range(0, GameConstants.GRID_DIMENSION_Y);
+        if (!IsAreaAvailable(new Coord(x, y), b.GetSize(), 0)){
+            return FindRandomArea(b);
+        }
+        return new Coord(x, y);
     }
 
     public void ClearGrid()
@@ -122,7 +130,6 @@ public class GridManager : MonoBehaviour {
 
     public bool IsAreaAvailable(Coord position, int buildingSize, int instance)
     {
-        //print(position.ToString());
         for (int i = position.x; i < position.x + buildingSize; i++)
         {
             for (int j = position.y; j < position.y + buildingSize; j++)
@@ -142,8 +149,6 @@ public class GridManager : MonoBehaviour {
 
     public void UpdateBuilding(Building building, UpdateType updateType)
     {
-        var position = building.coord;
-        var buildingSize = building.GetSize();
         if(updateType == UpdateType.NEW)
         {
             AddBuilding(building);
@@ -169,6 +174,7 @@ public class GridManager : MonoBehaviour {
             for (int j = position.y; j < position.y + buildingSize; j++)
             {
                 grids[i, j] = building.gameObject.GetInstanceID();
+                
             }
         }
     }
@@ -188,8 +194,6 @@ public class GridManager : MonoBehaviour {
 
     private void MoveBuilding(Building building)
     {
-        var position = building.coord;
-        var buildingSize = building.GetSize();
         for (int i = 0; i < GameConstants.GRID_DIMENSION_Y; i++)
         {
             for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)

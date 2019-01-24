@@ -51,7 +51,7 @@ public class InputManager : MonoBehaviour {
 
     private void HandleInputEnded()
     {
-        if (selectedBuilding.buildingState == BuildingState.MOVE)
+        if (selectedBuilding && selectedBuilding.buildingState == BuildingState.MOVE)
         {
             selectedBuilding.OnMoveEnded();
         }
@@ -90,7 +90,6 @@ public class InputManager : MonoBehaviour {
             {
                 
                 selectedBuilding = hit.transform.GetComponent<Building>();
-                Vector3 newHitPoint = new Vector3(hit.point.x, 0, hit.point.z);
                 delta = hit.point - selectedBuilding.transform.position;
             }
         

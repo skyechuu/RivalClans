@@ -54,13 +54,18 @@ public class Building : MonoBehaviour, IMoveable {
                 buildingState = BuildingState.IDLE;
             }
         }
+        else
+        {
+            buildingState = BuildingState.IDLE;
+            GridManager.instance.VisualizeGridMap();
+        }
     }
 
     public void OnCancelMove()
     {
         buildingState = BuildingState.IDLE;
         SetPosition(oldCoord);
-        GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
+        GridManager.instance.VisualizeGridMap();
     }
 
     public void SetPosition(Vector3 worldPosition)

@@ -17,7 +17,7 @@ public class BuildingManager : MonoBehaviour
 
     void Start ()
     {
-        StartCoroutine(SeedData());
+        //StartCoroutine(SeedData());
     }
 	
 	void Update () {
