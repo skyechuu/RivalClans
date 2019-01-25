@@ -6,17 +6,14 @@ public class InputManager : MonoBehaviour {
     public static InputManager instance;
 
     [Header("Debug")]
-    [SerializeField] Grid firstGrid;
-    [SerializeField] Grid onGrid;
     [SerializeField] Building selectedBuilding;
 
     [Header("Layers")]
     [SerializeField] LayerMask groundLayer;
-    [SerializeField] LayerMask gridLayer;
+    [SerializeField] LayerMask buildingLayer;
     
-    private Vector3 buildingGrabOffset;
-    private RaycastHit hit;
-    [SerializeField] private bool moving = false;
+    Vector3 delta;
+    RaycastHit hit;
 
     void Awake()
     {
@@ -29,78 +26,98 @@ public class InputManager : MonoBehaviour {
         if (NoInputExists)
             return;
 
+        HandleInput();
+        
+	}
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(hit.point, 0.5f);
+        Gizmos.color = Color.red;
+        if (selectedBuilding)
+        {
+            Gizmos.DrawWireSphere(hit.point - delta, 0.5f);
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(Tools.GetGridPosition(hit.point - delta, selectedBuilding.GetSize()), 0.5f);
+        }
+
+    }
+
+    private void HandleInput()
+    {
         if (IsInputEnded)
         {
-            if(moving)
-            {
-                if (firstGrid == onGrid)
-                    CancelMoveState();
-                else
-                {
-                    
-                }
-            }
-            moving = false;
-            buildingGrabOffset = Vector3.zero;
+            HandleInputEnded();
         }
 
         if (IsInputMoved)
         {
-            if (OnGrid())
-            {
-                if (moving)
-                {
-                    onGrid = hit.transform.GetComponent<Grid>();
-                }
-            }
+            HandleInputMoved();
         }
 
         if (IsInputStarted)
         {
-            if (OnGrid())
+            HandleInputStarted();
+        }
+    }
+
+    private void HandleInputEnded()
+    {
+        if (selectedBuilding && selectedBuilding.buildingState == BuildingState.MOVE)
+        {
+            selectedBuilding.OnMoveEnded();
+        }
+        delta = Vector3.zero;
+    }
+
+    private void HandleInputMoved()
+    {
+        if (IsOnGround())
+        {
+            if (selectedBuilding)
             {
-                firstGrid = hit.transform.GetComponent<Grid>();
-                if (onGrid)
+                if (selectedBuilding.buildingState == BuildingState.MOVE)
                 {
-                    if (SameGridClicked())
-                    {
-                        StartMoveState();
-                    }
-                    else if (SameBuildingSelected())
-                    {
-                        onGrid = hit.transform.GetComponent<Grid>();
-                        StartMoveState();
-                    }
-                    else
-                    {
-                        SelectGrid();
-                    }
-                }
-                else
-                {
-                    SelectGrid();
+                    var position = hit.point - delta;
+                    selectedBuilding.OnMove(position);
                 }
             }
         }
-
-	}
-
-    private void SelectGrid()
-    {
-        onGrid = hit.transform.GetComponent<Grid>();
-        selectedBuilding = onGrid.building;
     }
 
-    private void CancelMoveState()
+    private void HandleInputStarted()
     {
-        throw new NotImplementedException();
+        if (IsOnBuilding())
+        {
+            if (selectedBuilding && IsSameBuilding())
+            {
+                delta = hit.point - selectedBuilding.transform.position;
+                selectedBuilding.OnMoveStarted();
+            }
+            else if (selectedBuilding && selectedBuilding.buildingState == BuildingState.MOVE)
+            {
+                selectedBuilding.OnCancelMove();
+            }
+            else
+            {
+                
+                selectedBuilding = hit.transform.GetComponent<Building>();
+                delta = hit.point - selectedBuilding.transform.position;
+            }
+        
+        }
+        else
+        {
+            if (selectedBuilding && selectedBuilding.buildingState == BuildingState.MOVE)
+                selectedBuilding.OnCancelMove();
+            selectedBuilding = null;
+        }
     }
 
-    private void StartMoveState()
+    private bool IsSameBuilding()
     {
-        moving = true;
-        if(selectedBuilding && onGrid)
-            buildingGrabOffset = selectedBuilding.transform.position - onGrid.transform.position;
+        return hit.transform.GetComponent<Building>() == selectedBuilding;
     }
 
     bool NoInputExists
@@ -153,40 +170,22 @@ public class InputManager : MonoBehaviour {
 #endif
     }
 
-    void OnDrawGizmos()
-    {
-        //Gizmos.color = Color.red;
-        //Gizmos.DrawWireSphere(target, 0.2f);
-        //Gizmos.color = Color.white;
-        //Gizmos.DrawLine(inputPosition, inputPosition - buildOffset);
-
-        /*if (onGrid)
-        {
-            Vector3 pinPositionOfBuilding = onGrid.transform.position - new Vector3(0.5f, 0, 0.5f);
-            Gizmos.DrawWireSphere(pinPositionOfBuilding, 0.2f);
-        }*/
-    }
-
-    bool OnGround()
+    bool IsOnGround()
     {
         var inputPosition = Camera.main.ScreenToWorldPoint(RawInputPosition);
         return Physics.Raycast(inputPosition, Camera.main.transform.forward, out hit, float.MaxValue, groundLayer);
     }
 
-    bool OnGrid()
+    bool IsOnBuilding()
     {
         var inputPosition = Camera.main.ScreenToWorldPoint(RawInputPosition);
-        return Physics.Raycast(inputPosition, Camera.main.transform.forward, out hit, float.MaxValue, gridLayer);
+        return Physics.Raycast(inputPosition, Camera.main.transform.forward, out hit, float.MaxValue, buildingLayer);
     }
 
-    bool SameGridClicked()
+    Vector3 GetDelta()
     {
-        return onGrid == hit.transform.GetComponent<Grid>();
-    }
-
-    bool SameBuildingSelected()
-    {
-        return selectedBuilding == hit.transform.GetComponent<Grid>().building;
-    }
-
+        return delta;
+    } 
+    
+    
 }
