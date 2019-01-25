@@ -26,7 +26,6 @@ public class GridManager : MonoBehaviour {
 	void Start () {
         CreateGridMap();
         InitiallyOccupyGrids();
-        
     }
 
     void CreateGridMap()

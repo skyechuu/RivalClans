@@ -73,7 +73,13 @@ public class Building : MonoBehaviour, IMoveable {
     {
         if(position != transform.position)
         {
+            var newPosition = Tools.GetGridPosition(position, GetSize());
+            print(newPosition);
+            //Coord _test = new Coord((int)newPosition.x, (int)newPosition.z);
+
             Coord _coord = Tools.GetGridCoord(position, GetSize());
+            //Coord _coord = _test;
+
             bool available = GridManager.instance.IsAreaAvailable(_coord, GetSize(), gameObject.GetInstanceID());
             if (available)
             {
