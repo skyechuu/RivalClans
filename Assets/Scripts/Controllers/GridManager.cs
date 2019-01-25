@@ -13,6 +13,8 @@ public class GridManager : MonoBehaviour {
     [SerializeField] GameObject gridPrefab;
     
     int[,] grids;
+
+    // for visualization
     Grid[,] gridMap;
     
     void Awake()
@@ -108,7 +110,7 @@ public class GridManager : MonoBehaviour {
         }
     }
 
-    Coord FindRandomArea(Building b)
+    public Coord FindRandomArea(Building b)
     {
         int x, y;
         x = UnityEngine.Random.Range(0, GameConstants.GRID_DIMENSION_X);

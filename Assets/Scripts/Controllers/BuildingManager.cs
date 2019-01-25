@@ -21,4 +21,15 @@ public class BuildingManager : MonoBehaviour
         SessionManager.instance.GetDatabaseManager().AddBuildingInstance(building);
         GridManager.instance.UpdateBuilding(building, UpdateType.NEW);
     }
+
+    public void Build(Building _building)
+    {
+        Coord coord = GridManager.instance.FindRandomArea(_building);
+        Building building = Object.Instantiate(_building, Tools.GetWorldPosition(coord, _building.GetSize()), Quaternion.identity, transform);
+        building.coord = coord;
+        SessionManager.instance.GetDatabaseManager().AddBuildingInstance(building);
+        GridManager.instance.UpdateBuilding(building, UpdateType.NEW);
+    }
+    
+
 }

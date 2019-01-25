@@ -44,7 +44,6 @@ public class InputManager : MonoBehaviour {
 
     }
 
-
     private void HandleInput()
     {
         if (IsInputEnded)
@@ -112,6 +111,7 @@ public class InputManager : MonoBehaviour {
         {
             if (selectedBuilding && selectedBuilding.buildingState == BuildingState.MOVE)
                 selectedBuilding.OnCancelMove();
+            selectedBuilding = null;
         }
     }
 

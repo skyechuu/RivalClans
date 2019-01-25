@@ -50,6 +50,13 @@ public class Resource
         }
     }
 
+    public void SpendResource(Resource resource)
+    {
+        RemoveCoin(resource.coin);
+        RemoveRock(resource.rock);
+        RemoveWood(resource.wood);
+    }
+
     public void AddWood(int _wood)
     {
         wood += _wood;

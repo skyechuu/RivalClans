@@ -12,7 +12,7 @@ public class Building : MonoBehaviour, IMoveable {
     private Coord oldCoord;
 
     private float cooldown = 10;
-    private float nextTick = 0;
+    private float nextTick = 10;
     
     void Update()
     {
@@ -77,12 +77,8 @@ public class Building : MonoBehaviour, IMoveable {
             bool available = GridManager.instance.IsAreaAvailable(_coord, GetSize(), gameObject.GetInstanceID());
             if (available)
             {
-                SetPosition(Tools.GetGridPosition(position, GetSize()));
+                SetPosition(_coord);
                 GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
-            }
-            else
-            {
-                print(false);
             }
         }
     }

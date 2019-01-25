@@ -16,9 +16,8 @@ public static class Tools
 
     public static Coord GetGridCoord(Vector3 worldPosition, int buildingSize)
     {
-        int x = (int)(worldPosition.x - (-GameConstants.GRID_DIMENSION_X / 2 + (buildingSize / 2.0f)));
-        int y = (int)(worldPosition.z - (-GameConstants.GRID_DIMENSION_Y / 2 + (buildingSize / 2.0f)));
-        return new Coord(x, y);
+        Vector3 pos = GetGridPosition(worldPosition, buildingSize);
+        return new Coord(pos.x, pos.z);
     }
 
     public static bool IsIndexInGridDimensions(int i, int j)
