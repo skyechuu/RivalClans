@@ -3,7 +3,7 @@
 public class Building : MonoBehaviour, IMoveable {
 
     public BuildingCategory category;
-    public BuildingState buildingState;
+    public BuildingState state;
     public string buildingName;
     public Resource buildCost;
     public Resource produces;
@@ -21,7 +21,7 @@ public class Building : MonoBehaviour, IMoveable {
 
     void HandleProduce()
     {
-        if (buildingState != BuildingState.CONSTRUCTION)
+        if (state != BuildingState.CONSTRUCTION)
         {
             if(Time.time > nextTick)
             {
@@ -65,22 +65,19 @@ public class Building : MonoBehaviour, IMoveable {
 
     public void OnMoveStarted()
     {
-        oldCoord = coord;
-        buildingState = BuildingState.MOVE;
+        if(state != BuildingState.MOVE)
+        {
+            oldCoord = coord;
+            state = BuildingState.MOVE;
+        }
     }
 
     public void OnMove(Vector3 position)
     {
         if(position != transform.position)
         {
-            var newPosition = Tools.GetGridPosition(position, GetSize());
-            print(newPosition);
-            //Coord _test = new Coord((int)newPosition.x, (int)newPosition.z);
-
             Coord _coord = Tools.GetGridCoord(position, GetSize());
-            //Coord _coord = _test;
-
-            bool available = GridManager.instance.IsAreaAvailable(_coord, GetSize(), gameObject.GetInstanceID());
+            bool available = GridManager.instance.IsAreaInGrid(_coord, GetSize());
             if (available)
             {
                 SetPosition(_coord);
@@ -97,21 +94,21 @@ public class Building : MonoBehaviour, IMoveable {
             if (available)
             {
                 GridManager.instance.UpdateBuilding(this, UpdateType.CHANGE);
-                buildingState = BuildingState.IDLE;
+                state = BuildingState.IDLE;
             }
         }
         else
         {
-            buildingState = BuildingState.IDLE;
-            GridManager.instance.VisualizeGridMap();
+            state = BuildingState.IDLE;
+            GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
         }
     }
 
     public void OnCancelMove()
     {
-        buildingState = BuildingState.IDLE;
+        state = BuildingState.IDLE;
         SetPosition(oldCoord);
-        GridManager.instance.VisualizeGridMap();
+        GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
     }
 
     public void SetPosition(Vector3 worldPosition)

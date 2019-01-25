@@ -64,7 +64,7 @@ public class InputManager : MonoBehaviour {
 
     private void HandleInputEnded()
     {
-        if (selectedBuilding && selectedBuilding.buildingState == BuildingState.MOVE)
+        if (selectedBuilding && selectedBuilding.state == BuildingState.MOVE)
         {
             selectedBuilding.OnMoveEnded();
         }
@@ -77,7 +77,7 @@ public class InputManager : MonoBehaviour {
         {
             if (selectedBuilding)
             {
-                if (selectedBuilding.buildingState == BuildingState.MOVE)
+                if (selectedBuilding.state == BuildingState.MOVE)
                 {
                     var position = hit.point - delta;
                     selectedBuilding.OnMove(position);
@@ -95,23 +95,24 @@ public class InputManager : MonoBehaviour {
                 delta = hit.point - selectedBuilding.transform.position;
                 selectedBuilding.OnMoveStarted();
             }
-            else if (selectedBuilding && selectedBuilding.buildingState == BuildingState.MOVE)
+            else if (selectedBuilding && selectedBuilding.state == BuildingState.MOVE)
             {
                 selectedBuilding.OnCancelMove();
             }
             else
             {
-                
                 selectedBuilding = hit.transform.GetComponent<Building>();
                 delta = hit.point - selectedBuilding.transform.position;
+                GridManager.instance.VisualizeGridMap(selectedBuilding.coord, selectedBuilding.GetSize(), selectedBuilding.gameObject.GetInstanceID(), Color.yellow);
             }
         
         }
         else
         {
-            if (selectedBuilding && selectedBuilding.buildingState == BuildingState.MOVE)
+            if (selectedBuilding && selectedBuilding.state == BuildingState.MOVE)
                 selectedBuilding.OnCancelMove();
             selectedBuilding = null;
+            GridManager.instance.ClearGrid();
         }
     }
 
@@ -187,5 +188,8 @@ public class InputManager : MonoBehaviour {
         return delta;
     } 
     
-    
+    public Building GetSelectedBuilding()
+    {
+        return selectedBuilding;
+    }
 }

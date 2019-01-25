@@ -46,8 +46,10 @@ public class GridManager : MonoBehaviour {
         GetComponent<BoxCollider>().size = new Vector3(GameConstants.GRID_DIMENSION_X * GameConstants.GRID_UNIT, 0.1f, GameConstants.GRID_DIMENSION_Y * GameConstants.GRID_UNIT);
     }
 
-    public void VisualizeGridMap()
+    public void VisualizeGridxMap()
     {
+        Building selectedBuilding = InputManager.instance.GetSelectedBuilding();
+
         for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)
         {
             for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
@@ -58,6 +60,15 @@ public class GridManager : MonoBehaviour {
                 {
                     gridMap[i, j].SetColor(Color.yellow);
                 }
+
+                if(selectedBuilding != null)
+                {
+                    if (selectedBuilding.coord.Equals(new Coord(i, j)))
+                    {
+                        gridMap[i, j].SetColor(Color.cyan);
+                    }
+                }
+
             }
         }
     }
@@ -71,8 +82,26 @@ public class GridManager : MonoBehaviour {
             {
                 if(Tools.IsIndexInGridDimensions(i, j))
                 {
-                    if ((grids[i, j] == 0 || grids[i, j] == instance) && Tools.IsIndexInGridDimensions(i,j))
+                    if ((grids[i, j] == 0 || grids[i, j] == instance))
                         gridMap[i, j].SetColor(Color.green);
+                    else
+                        gridMap[i, j].SetColor(Color.red);
+                }
+            }
+        }
+    }
+
+    public void VisualizeGridMap(Coord position, int buildingSize, int instance, Color c)
+    {
+        ClearGrid();
+        for (int i = position.x; i < position.x + buildingSize; i++)
+        {
+            for (int j = position.y; j < position.y + buildingSize; j++)
+            {
+                if (Tools.IsIndexInGridDimensions(i, j))
+                {
+                    if ((grids[i, j] == 0 || grids[i, j] == instance))
+                        gridMap[i, j].SetColor(c);
                     else
                         gridMap[i, j].SetColor(Color.red);
                 }
@@ -86,7 +115,7 @@ public class GridManager : MonoBehaviour {
         {
             for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
             {
-                gridMap[i, j].SetColor(Color.white);
+                gridMap[i, j].SetColor(GameConstants.DEFAULT_GRID_COLOR);
             }
         }
     }
@@ -138,11 +167,26 @@ public class GridManager : MonoBehaviour {
         {
             for (int j = position.y; j < position.y + buildingSize; j++)
             {
-                if (i < 0 || i >= GameConstants.GRID_DIMENSION_X || j < 0 || j >= GameConstants.GRID_DIMENSION_Y)
+                if (!Tools.IsIndexInGridDimensions(i, j))
                 {
                     return false;
                 }
                 if (grids[i, j] != 0 && grids[i, j] != instance)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public bool IsAreaInGrid(Coord position, int buildingSize)
+    {
+        for (int i = position.x; i < position.x + buildingSize; i++)
+        {
+            for (int j = position.y; j < position.y + buildingSize; j++)
+            {
+                if (!Tools.IsIndexInGridDimensions(i, j))
                 {
                     return false;
                 }
@@ -166,7 +210,6 @@ public class GridManager : MonoBehaviour {
             MoveBuilding(building);
         }
         Debug.LogWarning("Building "+building.name+" (" + building.GetInstanceID() + ") updated. Update Method: " + updateType.ToString());
-        VisualizeGridMap();
     }
 
     private void AddBuilding(Building building)
