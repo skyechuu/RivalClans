@@ -1,17 +1,14 @@
 ﻿using UnityEngine;
 
+
 public class Building : MonoBehaviour, IMoveable {
 
-    public BuildingCategory category;
-    public BuildingState state;
-    public string buildingName;
+    [SerializeField] public BuildingScriptableObject data;
+
     public Resource buildCost;
-    public Resource produces;
-    public Coord coord;
+    public BuildingState state;
 
     private Coord oldCoord;
-
-    private float cooldown = 10;
     private float nextTick = 10;
     
     void Update()
@@ -26,7 +23,7 @@ public class Building : MonoBehaviour, IMoveable {
             if(Time.time > nextTick)
             {
                 ProduceResource();
-                nextTick = Time.time + cooldown;
+                nextTick = Time.time + data.produceRateInSeconds;
             }
         }
     }
@@ -40,7 +37,7 @@ public class Building : MonoBehaviour, IMoveable {
     void ProduceResource()
     {
         ResourceType type;
-        if(category == BuildingCategory.Category2)
+        if(data.category == BuildingCategory.Category2)
             type = ResourceType.COIN;
         else
             type = SelectRandomResourceType();
@@ -49,13 +46,13 @@ public class Building : MonoBehaviour, IMoveable {
         switch (type)
         {
             case ResourceType.COIN:
-                value = produces.coin;
+                value = data.produces.coin;
                 break;
             case ResourceType.ROCK:
-                value = produces.rock;
+                value = data.produces.rock;
                 break;
             case ResourceType.WOOD:
-                value = produces.wood;
+                value = data.produces.wood;
                 break;
             default:
                 break;
@@ -67,7 +64,7 @@ public class Building : MonoBehaviour, IMoveable {
     {
         if(state != BuildingState.MOVE)
         {
-            oldCoord = coord;
+            oldCoord = data.coord;
             state = BuildingState.MOVE;
         }
     }
@@ -81,16 +78,16 @@ public class Building : MonoBehaviour, IMoveable {
             if (available)
             {
                 SetPosition(_coord);
-                GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
+                GridManager.instance.VisualizeGridMap(data.coord, GetSize(), gameObject.GetInstanceID());
             }
         }
     }
 
     public void OnMoveEnded()
     {
-        if (!oldCoord.Equals(coord))
+        if (!oldCoord.Equals(data.coord))
         {
-            bool available = GridManager.instance.IsAreaAvailable(coord, GetSize(), gameObject.GetInstanceID());
+            bool available = GridManager.instance.IsAreaAvailable(data.coord, GetSize(), gameObject.GetInstanceID());
             if (available)
             {
                 GridManager.instance.UpdateBuilding(this, UpdateType.CHANGE);
@@ -100,7 +97,7 @@ public class Building : MonoBehaviour, IMoveable {
         else
         {
             state = BuildingState.IDLE;
-            GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
+            GridManager.instance.VisualizeGridMap(data.coord, GetSize(), gameObject.GetInstanceID());
         }
     }
 
@@ -108,30 +105,31 @@ public class Building : MonoBehaviour, IMoveable {
     {
         state = BuildingState.IDLE;
         SetPosition(oldCoord);
-        GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
+        GridManager.instance.VisualizeGridMap(data.coord, GetSize(), gameObject.GetInstanceID());
     }
 
     public void SetPosition(Vector3 worldPosition)
     {
         transform.position = worldPosition;
-        coord = Tools.GetGridCoord(worldPosition, GetSize());
+        data.coord = Tools.GetGridCoord(worldPosition, GetSize());
     }
 
     public void SetPosition(Coord _coord)
     {
         transform.position = Tools.GetWorldPosition(_coord, GetSize());
-        coord = _coord;
+        data.coord = _coord;
     }
 
     public int GetSize()
     {
-        switch (category)
+        switch (data.category)
         {
             case BuildingCategory.Category1:
                 return 1;   // 1x1
             case BuildingCategory.Category2:
                 return 2;   // 2x2
             default:
+                Debug.LogError("("+gameObject.GetInstanceID()+") Building.GetSize() ");
                 return 0;
         }
     }

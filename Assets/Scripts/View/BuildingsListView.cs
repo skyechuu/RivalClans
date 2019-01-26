@@ -10,7 +10,7 @@ public class BuildingsListView : MonoBehaviour {
     {
         if(contentList.childCount == 0)
         {
-            foreach(Building b in BuildingManager.instance.availableBuildings)
+            foreach(Building b in SessionManager.instance.availableBuildings)
             {
                 GameObject go = Instantiate(buildingViewPrefab, contentList);
                 go.GetComponent<BuildingButtonView>().SetBuilding(b);

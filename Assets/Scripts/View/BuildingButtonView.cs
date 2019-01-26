@@ -9,7 +9,9 @@ public class BuildingButtonView : MonoBehaviour {
     [SerializeField] Text rockText;
     [SerializeField] Text coinText;
 
-    void Start () {
+    void OnEnable () {
+        if(building)
+            RenderTexts();
 	}
 	
 	void Update () {
@@ -36,10 +38,40 @@ public class BuildingButtonView : MonoBehaviour {
     {
         building = _building;
         title.text = building.name;
-        woodText.text = string.Format("x{0} Wood", building.buildCost.wood);
-        rockText.text = string.Format("x{0} Rock", building.buildCost.rock);
-        coinText.text = string.Format("x{0} Coin", building.buildCost.coin);
 
+        if (building.buildCost.wood > 0)
+            woodText.text = string.Format("x{0} Wood", building.buildCost.wood);
+        else
+            woodText.gameObject.SetActive(false);
+
+        if (building.buildCost.rock > 0)
+            rockText.text = string.Format("x{0} Rock", building.buildCost.rock);
+        else
+            rockText.gameObject.SetActive(false);
+
+        if (building.buildCost.coin > 0)
+            coinText.text = string.Format("x{0} Coin", building.buildCost.coin);
+        else
+            coinText.gameObject.SetActive(false);
+
+    }
+
+    void RenderTexts()
+    {
+        if (building.buildCost.wood > 0)
+            woodText.text = string.Format("x{0} Wood", building.buildCost.wood);
+        else
+            woodText.gameObject.SetActive(false);
+
+        if (building.buildCost.rock > 0)
+            rockText.text = string.Format("x{0} Rock", building.buildCost.rock);
+        else
+            rockText.gameObject.SetActive(false);
+
+        if (building.buildCost.coin > 0)
+            coinText.text = string.Format("x{0} Coin", building.buildCost.coin);
+        else
+            coinText.gameObject.SetActive(false);
     }
 
 

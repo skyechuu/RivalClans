@@ -1,11 +1,16 @@
-﻿
-
-[System.Serializable]
+﻿[System.Serializable]
 public class Resource
 {
     public int wood;
     public int rock;
     public int coin;
+
+    public Resource()
+    {
+        wood = 0;
+        rock = 0;
+        coin = 0;
+    }
 
     public Resource(int _wood, int _rock, int _coin)
     {
@@ -85,6 +90,20 @@ public class Resource
     public void RemoveCoin(int _coin)
     {
         coin -= _coin;
+    }
+
+    public override string ToString()
+    {
+        return string.Format("W:{0}\tR:{1}\tC:{2}", wood, rock, coin);
+    }
+
+    public static Resource operator+ (Resource a, Resource b)
+    {
+        Resource newResource = new Resource();
+        newResource.wood = a.wood + b.wood;
+        newResource.rock = a.rock + b.rock;
+        newResource.coin = a.coin + b.coin;
+        return newResource;
     }
 
 }

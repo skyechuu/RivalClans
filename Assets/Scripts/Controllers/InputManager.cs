@@ -103,7 +103,7 @@ public class InputManager : MonoBehaviour {
             {
                 selectedBuilding = hit.transform.GetComponent<Building>();
                 delta = hit.point - selectedBuilding.transform.position;
-                GridManager.instance.VisualizeGridMap(selectedBuilding.coord, selectedBuilding.GetSize(), selectedBuilding.gameObject.GetInstanceID(), Color.yellow);
+                GridManager.instance.VisualizeGridMap(selectedBuilding.data.coord, selectedBuilding.GetSize(), selectedBuilding.gameObject.GetInstanceID(), Color.yellow);
             }
         
         }
@@ -111,6 +111,7 @@ public class InputManager : MonoBehaviour {
         {
             if (selectedBuilding && selectedBuilding.state == BuildingState.MOVE)
                 selectedBuilding.OnCancelMove();
+
             selectedBuilding = null;
             GridManager.instance.ClearGrid();
         }

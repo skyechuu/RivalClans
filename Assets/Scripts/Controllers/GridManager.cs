@@ -63,7 +63,7 @@ public class GridManager : MonoBehaviour {
 
                 if(selectedBuilding != null)
                 {
-                    if (selectedBuilding.coord.Equals(new Coord(i, j)))
+                    if (selectedBuilding.data.coord.Equals(new Coord(i, j)))
                     {
                         gridMap[i, j].SetColor(Color.cyan);
                     }
@@ -127,10 +127,10 @@ public class GridManager : MonoBehaviour {
 
         var initialOccupyAmount = GameConstants.GRID_DIMENSION_X * GameConstants.GRID_DIMENSION_Y * percentageOfInitiallyOccupiedGrids / 100;
         var occupied = 0;
-        while (occupied != initialOccupyAmount)
+        while (occupied <= initialOccupyAmount)
         {
-            var buildingIndex = (initialOccupyAmount - occupied > 3) ? UnityEngine.Random.Range(0, BuildingManager.instance.availableBuildings.Count) : 0;
-            var building = BuildingManager.instance.availableBuildings[buildingIndex];
+            var buildingIndex = (initialOccupyAmount - occupied > 3) ? UnityEngine.Random.Range(0, SessionManager.instance.availableBuildings.Count) : 0;   // 0 = index where 1x1 building stored
+            var building = SessionManager.instance.availableBuildings[buildingIndex];
             Coord coord = FindRandomArea(building);
             
             BuildingManager.instance.Build(building, coord);
@@ -214,7 +214,7 @@ public class GridManager : MonoBehaviour {
 
     private void AddBuilding(Building building)
     {
-        var position = building.coord;
+        var position = building.data.coord;
         var buildingSize = building.GetSize();
         for (int i = position.x; i < position.x + buildingSize; i++)
         {
@@ -228,7 +228,7 @@ public class GridManager : MonoBehaviour {
 
     private void RemoveBuilding(Building building)
     {
-        var position = building.coord;
+        var position = building.data.coord;
         var buildingSize = building.GetSize();
         for (int i = position.x; i < position.x + buildingSize; i++)
         {
@@ -259,7 +259,7 @@ public class GridManager : MonoBehaviour {
             for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
             {
                 if (grids[i, j] == instanceID)
-                    return SessionManager.instance.GetDatabaseManager().FindBuildingWithInstanceID(instanceID);
+                    return SessionManager.instance.FindBuildingWithInstanceID(instanceID);
             }
         }
         return null;
