@@ -48,7 +48,7 @@ public class Building : MonoBehaviour, IMoveable {
 
     ResourceType SelectRandomResourceType()
     {
-        int random = Random.Range(0, 3);
+        int random = Random.Range(0, 2);
         return (ResourceType) random;
     }
 

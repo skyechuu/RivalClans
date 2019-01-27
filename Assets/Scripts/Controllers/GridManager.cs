@@ -23,8 +23,16 @@ public class GridManager : MonoBehaviour {
             instance = this;
     }
 
-	void Start () {
+    public void OnStart(bool initiallyOccupyGrids = false)
+    {
         CreateGridMap();
+        if(initiallyOccupyGrids)
+            StartCoroutine(RequestInitiallyOccupyGrids());
+    }
+
+    IEnumerator RequestInitiallyOccupyGrids()
+    {
+        yield return new WaitForSeconds(0.5f);
         InitiallyOccupyGrids();
     }
 
@@ -43,7 +51,7 @@ public class GridManager : MonoBehaviour {
                 grids[i, j] = 0;
             }
         }
-        GetComponent<BoxCollider>().size = new Vector3(GameConstants.GRID_DIMENSION_X * GameConstants.GRID_UNIT, 0.1f, GameConstants.GRID_DIMENSION_Y * GameConstants.GRID_UNIT);
+        //GetComponent<BoxCollider>().size = new Vector3(GameConstants.GRID_DIMENSION_X * GameConstants.GRID_UNIT, 0.1f, GameConstants.GRID_DIMENSION_Y * GameConstants.GRID_UNIT);
     }
 
     public void VisualizeGridxMap()
@@ -130,7 +138,7 @@ public class GridManager : MonoBehaviour {
         {
             var buildingIndex = (initialOccupyAmount - occupied > 3) ? UnityEngine.Random.Range(0, DatabaseManager.instance.buildingObjects.Count) : 0;   // 0 = index where 1x1 building stored
             var building = DatabaseManager.instance.buildingObjects[buildingIndex];
-            building.data = DatabaseManager.instance.FindBuildingData(building.dataId);
+            building.data = DatabaseManager.FindBuildingData(building.dataId);
             Coord coord = FindRandomArea(building);
             BuildingManager.instance.Build(building, coord);
             occupied += (int)Mathf.Pow(building.GetSize(), 2);

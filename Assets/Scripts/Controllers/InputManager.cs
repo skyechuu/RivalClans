@@ -29,7 +29,8 @@ public class InputManager : MonoBehaviour {
 
         HandleInput();
         
-	}
+
+    }
 
     void OnDrawGizmos()
     {
@@ -151,25 +152,28 @@ public class InputManager : MonoBehaviour {
 
     private void HandleInputEnded()
     {
-        if (selectedBuilding && selectedBuilding.GetState() == BuildingState.MOVE)
-        {
-            //selectedBuilding.OnMoveEnded();
-        }
         delta = Vector3.zero;
+        if (CameraManager.instance.state == CameraState.MOVE)
+            CameraManager.instance.state = CameraState.IDLE;
     }
 
     private void HandleInputMoved()
     {
         if (IsOnGround())
         {
-            if (selectedBuilding)
+            if (CameraManager.instance.state == CameraState.MOVE)
+                CameraManager.instance.MoveCamera(new Vector3(Input.GetAxisRaw("Mouse X"), 0f, Input.GetAxisRaw("Mouse Y")));
+            else if (selectedBuilding)
             {
                 if (selectedBuilding.GetState() == BuildingState.MOVE)
                 {
+                    print(delta);
                     var position = hit.point - delta;
                     selectedBuilding.OnMove(position);
                 }
             }
+
+            
         }
     }
 
@@ -192,9 +196,10 @@ public class InputManager : MonoBehaviour {
                 OnSelectBuilding(hit.transform.GetComponent<Building>());
             }
         }
-        else
+        else if (IsOnGround())
         {
-            if (IsOnGround() && !(selectedBuilding.GetState() == BuildingState.MOVE))
+            CameraManager.instance.state = CameraState.MOVE;
+            if (selectedBuilding && !(selectedBuilding.GetState() == BuildingState.MOVE))
             {
                 OnDeselectBuilding();
             }

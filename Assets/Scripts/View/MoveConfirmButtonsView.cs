@@ -15,7 +15,8 @@ public class MoveConfirmButtonsView : MonoBehaviour {
 
 	void LateUpdate()
     {
-        transform.position = building.transform.position + (Vector3.up * offsetY);
+        if(building)
+            Move();
     }
 
     public void OnCancel()
@@ -30,5 +31,15 @@ public class MoveConfirmButtonsView : MonoBehaviour {
         building.OnMoveEnded();
         GameViewManager.instance.SetMoveConfirmButtonViewActive(false);
         InputManager.instance.OnDeselectBuilding();
+    }
+
+    public void Move()
+    {
+        var viewportPoint = Camera.main.WorldToViewportPoint(building.transform.position);
+        var canvas = transform.parent.GetComponent<RectTransform>();
+        transform.position = new Vector3(
+            viewportPoint.x * canvas.sizeDelta.x * canvas.localScale.x,
+            viewportPoint.y * canvas.sizeDelta.y * canvas.localScale.y,
+            viewportPoint.z * canvas.localScale.z) + offsetY * Vector3.up;
     }
 }

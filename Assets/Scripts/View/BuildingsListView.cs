@@ -10,11 +10,12 @@ public class BuildingsListView : MonoBehaviour {
     {
         if(contentList.childCount == 0)
         {
-            foreach(Building b in DatabaseManager.instance.buildingObjects)
+            foreach(var item in SessionManager.availableBuildings)
             {
                 GameObject go = Instantiate(buildingViewPrefab, contentList);
-                go.GetComponent<BuildingButtonView>().SetBuilding(b);
+                go.GetComponent<BuildingButtonView>().SetBuilding(item.Key);
             }
         }
+        contentList.GetComponent<RectTransform>().sizeDelta = new Vector2(220f * (contentList.childCount + 1), 0);
     }
 }

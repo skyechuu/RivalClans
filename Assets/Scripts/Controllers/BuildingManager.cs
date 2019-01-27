@@ -22,7 +22,7 @@ public class BuildingManager : MonoBehaviour
     {
         Building building = Object.Instantiate(_building, Tools.GetWorldPosition(coord, _building.GetSize()), Quaternion.identity, transform);
         building.SetCoord(coord);
-        building.data = DatabaseManager.instance.FindBuildingData(building.dataId);
+        building.data = DatabaseManager.FindBuildingData(building.dataId);
         GridManager.instance.UpdateBuilding(building, UpdateType.NEW);
         SessionManager.AddBuildingInstance(building);
     }
@@ -36,7 +36,7 @@ public class BuildingManager : MonoBehaviour
         Coord coord = GridManager.instance.FindRandomArea(_building);
         Building building = Instantiate(_building, Tools.GetWorldPosition(coord, _building.GetSize()), Quaternion.identity, transform);
         building.SetCoord(coord);
-        building.data = DatabaseManager.instance.FindBuildingData(building.dataId);
+        building.data = DatabaseManager.FindBuildingData(building.dataId);
         building.data.buildCost =  SessionManager.availableBuildings[_building].buildCost;
 
         GridManager.instance.UpdateBuilding(building, UpdateType.NEW);

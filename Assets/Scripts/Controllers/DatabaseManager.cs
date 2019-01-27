@@ -9,7 +9,7 @@ public class DatabaseManager : MonoBehaviour
     public static DatabaseManager instance;
 
     public List<Building> buildingObjects = new List<Building>();
-    public BuildingsData buildingsData;
+    public static BuildingsData buildingsData;
 
     const string buildingsJson = "buildings.json";
 
@@ -17,14 +17,12 @@ public class DatabaseManager : MonoBehaviour
     {
         if (instance == null)
             instance = this;
-
-        StartCoroutine(LoadBuildingListJson());
     }
 
-    IEnumerator LoadBuildingListJson()
+    public static IEnumerator LoadBuildingListJson()
     {
         var filePath = Path.Combine(Application.streamingAssetsPath, buildingsJson);
-
+        
         var jsonData = "";
         if (filePath.Contains("://"))
         {
@@ -42,7 +40,7 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    public BuildingData FindBuildingData(int id)
+    public static BuildingData FindBuildingData(int id)
     {
         
         foreach(var data in buildingsData.buildings)
@@ -50,7 +48,18 @@ public class DatabaseManager : MonoBehaviour
             if (data.id == id)
                 return data.Clone();
         }
-        Debug.LogError("Can't find building data. ");
+        Debug.LogError("Can't find building data ");
+        return null;
+    }
+
+    public Building FindBuildingObject(int id)
+    {
+        foreach(var building in buildingObjects)
+        {
+            if (building.dataId == id)
+                return building;
+        }
+        Debug.LogError("Can't find building object ");
         return null;
     }
 

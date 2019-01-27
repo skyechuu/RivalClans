@@ -18,4 +18,9 @@ public class ResourcesManager : MonoBehaviour {
         return totalResources;
     }
 
+    public void SetTotalResources(Resource resource)
+    {
+        totalResources = resource.Clone();
+    }
+
 }

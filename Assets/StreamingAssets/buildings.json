@@ -3,40 +3,183 @@
       {  
          "id":1000,
          "category":0,
-         "buildingName":"Woodcutter",
+         "buildingName":"Farm",
          "buildCost":{  
-            "wood":100,
+            "wood":40,
             "rock":0,
             "coin":0
          },
-         "produces": 50,
-         "produceRateInSeconds":2,
+         "produces": 10,
+         "produceRateInSeconds":10,
          "maxAmount":10
       },
       {  
          "id":1001,
-         "category":1,
-         "buildingName":"Quarry",
+         "category":0,
+         "buildingName":"Woodcutter",
          "buildCost":{  
-            "wood":200,
+            "wood":20,
             "rock":0,
-            "coin":150
+            "coin":0
          },
-         "produces": 50,
-         "produceRateInSeconds":2,
+         "produces": 5,
+         "produceRateInSeconds":10,
          "maxAmount":10
       },
       {  
          "id":1002,
-         "category":1,
-         "buildingName":"Market",
+         "category":0,
+         "buildingName":"Copper Mine",
          "buildCost":{  
-            "wood":250,
-            "rock":350,
+            "wood":20,
+            "rock":50,
+            "coin":20
+         },
+         "produces": 20,
+         "produceRateInSeconds":10,
+         "maxAmount":10
+      },
+      {  
+         "id":1003,
+         "category":0,
+         "buildingName":"Iron Mine",
+         "buildCost":{  
+            "wood":30,
+            "rock":50,
+            "coin":50
+         },
+         "produces": 35,
+         "produceRateInSeconds":10,
+         "maxAmount":10
+      },
+      {  
+         "id":1004,
+         "category":0,
+         "buildingName":"Platinium Mine",
+         "buildCost":{  
+            "wood":100,
+            "rock":150,
             "coin":150
          },
          "produces": 50,
-         "produceRateInSeconds":2,
+         "produceRateInSeconds":10,
+         "maxAmount":10
+      },
+      {  
+         "id":1005,
+         "category":0,
+         "buildingName":"Quarry",
+         "buildCost":{  
+            "wood":50,
+            "rock":50,
+            "coin":0
+         },
+         "produces": 20,
+         "produceRateInSeconds":10,
+         "maxAmount":10
+      },
+      {  
+         "id":1100,
+         "category":1,
+         "buildingName":"Market",
+         "buildCost":{  
+            "wood":0,
+            "rock":0,
+            "coin":60
+         },
+         "produces": 10,
+         "produceRateInSeconds":10,
+         "maxAmount":1
+      },
+      {  
+         "id":1101,
+         "category":1,
+         "buildingName":"Laboratory",
+         "buildCost":{  
+            "wood":100,
+            "rock":100,
+            "coin":100
+         },
+         "produces": 25,
+         "produceRateInSeconds":10,
+         "maxAmount":1
+      },
+      {  
+         "id":1102,
+         "category":1,
+         "buildingName":"Mage Tower",
+         "buildCost":{  
+            "wood":250,
+            "rock":200,
+            "coin":100
+         },
+         "produces": 30,
+         "produceRateInSeconds":10,
+         "maxAmount":1
+      },
+      {  
+         "id":1103,
+         "category":1,
+         "buildingName":"Barracks",
+         "buildCost":{  
+            "wood":150,
+            "rock":150,
+            "coin":60
+         },
+         "produces": 30,
+         "produceRateInSeconds":10,
+         "maxAmount":1
+      },
+      {  
+         "id":1104,
+         "category":1,
+         "buildingName":"Church",
+         "buildCost":{  
+            "wood":50,
+            "rock":350,
+            "coin":200
+         },
+         "produces": 30,
+         "produceRateInSeconds":10,
+         "maxAmount":1
+      },
+      {  
+         "id":1105,
+         "category":1,
+         "buildingName":"Workshop",
+         "buildCost":{  
+            "wood":250,
+            "rock":250,
+            "coin":250
+         },
+         "produces": 40,
+         "produceRateInSeconds":10,
+         "maxAmount":1
+      },
+      {  
+         "id":1106,
+         "category":1,
+         "buildingName":"Armory",
+         "buildCost":{  
+            "wood":150,
+            "rock":150,
+            "coin":100
+         },
+         "produces": 40,
+         "produceRateInSeconds":10,
+         "maxAmount":1
+      },
+      {  
+         "id":1107,
+         "category":1,
+         "buildingName":"Spell Factory",
+         "buildCost":{  
+            "wood":350,
+            "rock":150,
+            "coin":50
+         },
+         "produces": 50,
+         "produceRateInSeconds":10,
          "maxAmount":1
       }
    ]
