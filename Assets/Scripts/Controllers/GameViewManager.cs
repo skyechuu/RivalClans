@@ -6,6 +6,7 @@ public class GameViewManager : MonoBehaviour {
 
     [SerializeField] Transform buildMenuView;
     [SerializeField] Transform buildingPopupView;
+    [SerializeField] Transform moveConfirmButtonView;
 
     void Awake()
     {
@@ -21,5 +22,10 @@ public class GameViewManager : MonoBehaviour {
     public void SetBuildingPopupViewActive(bool value)
     {
         buildingPopupView.gameObject.SetActive(value);
+    }
+
+    public void SetMoveConfirmButtonViewActive(bool value)
+    {
+        moveConfirmButtonView.gameObject.SetActive(value);
     }
 }

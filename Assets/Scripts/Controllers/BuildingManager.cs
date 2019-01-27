@@ -38,11 +38,14 @@ public class BuildingManager : MonoBehaviour
         building.SetCoord(coord);
         building.data = DatabaseManager.instance.FindBuildingData(building.dataId);
         building.data.buildCost =  SessionManager.availableBuildings[_building].buildCost;
+
         GridManager.instance.UpdateBuilding(building, UpdateType.NEW);
         SessionManager.AddBuildingInstance(building);
         SessionManager.ChangeCategoryCount(building.GetCategory(), 1);
         ApplyInterestToBuildingCategory(building.GetCategory());
         ChangeRemainingOfBuilding(_building, -1);
+
+        InputManager.instance.OnSelectBuilding(building);
     }
 
     /// <summary>

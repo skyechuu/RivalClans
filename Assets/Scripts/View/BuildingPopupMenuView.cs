@@ -67,6 +67,8 @@ public class BuildingPopupMenuView : MonoBehaviour {
 
     public void OnMoveClick()
     {
-
+        building.OnMoveStarted();
+        GameViewManager.instance.SetBuildingPopupViewActive(false);
+        GameViewManager.instance.SetMoveConfirmButtonViewActive(true);
     }
 }

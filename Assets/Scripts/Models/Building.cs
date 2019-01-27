@@ -91,6 +91,7 @@ public class Building : MonoBehaviour, IMoveable {
             {
                 GridManager.instance.UpdateBuilding(this, UpdateType.CHANGE);
                 state = BuildingState.IDLE;
+                GridManager.instance.ClearGrid();
             }
         }
         else

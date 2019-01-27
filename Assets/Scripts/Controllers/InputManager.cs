@@ -153,7 +153,7 @@ public class InputManager : MonoBehaviour {
     {
         if (selectedBuilding && selectedBuilding.GetState() == BuildingState.MOVE)
         {
-            selectedBuilding.OnMoveEnded();
+            //selectedBuilding.OnMoveEnded();
         }
         delta = Vector3.zero;
     }
@@ -177,39 +177,40 @@ public class InputManager : MonoBehaviour {
     {
         if (IsOnBuilding())
         {
-            if (selectedBuilding && IsSameBuilding())
+            if (selectedBuilding)
             {
-                delta = hit.point - selectedBuilding.transform.position;
-                selectedBuilding.OnMoveStarted();
-            }
-            else if (selectedBuilding && selectedBuilding.GetState() == BuildingState.MOVE)
-            {
-                selectedBuilding.OnCancelMove();
+                if (IsSameBuilding())
+                {
+                    if (selectedBuilding.GetState() == BuildingState.MOVE)
+                    {
+                        delta = hit.point - selectedBuilding.transform.position;
+                    }
+                }
             }
             else
             {
-                OnSelectBuilding();
+                OnSelectBuilding(hit.transform.GetComponent<Building>());
             }
-
         }
         else
         {
-            if (selectedBuilding && selectedBuilding.GetState() == BuildingState.MOVE)
-                selectedBuilding.OnCancelMove();
-
-            OnDeselectBuilding();
+            if (IsOnGround() && !(selectedBuilding.GetState() == BuildingState.MOVE))
+            {
+                OnDeselectBuilding();
+            }
         }
     }
 
-    private void OnSelectBuilding()
+    public void OnSelectBuilding(Building building)
     {
-        selectedBuilding = hit.transform.GetComponent<Building>();
+        selectedBuilding = building;
         delta = hit.point - selectedBuilding.transform.position;
         GridManager.instance.VisualizeGridMap(selectedBuilding.GetCoord(), selectedBuilding.GetSize(), selectedBuilding.gameObject.GetInstanceID(), Color.yellow);
-        GameViewManager.instance.SetBuildingPopupViewActive(true);
+        if(selectedBuilding.GetState() != BuildingState.MOVE)
+            GameViewManager.instance.SetBuildingPopupViewActive(true);
     }
 
-    private void OnDeselectBuilding()
+    public void OnDeselectBuilding()
     {
         selectedBuilding = null;
         GridManager.instance.ClearGrid();
