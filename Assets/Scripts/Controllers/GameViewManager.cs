@@ -5,6 +5,7 @@ public class GameViewManager : MonoBehaviour {
     public static GameViewManager instance;
 
     [SerializeField] Transform buildMenuView;
+    [SerializeField] Transform buildingPopupView;
 
     void Awake()
     {
@@ -15,5 +16,10 @@ public class GameViewManager : MonoBehaviour {
     public void SetBuildMenuViewActive(bool value)
     {
         buildMenuView.gameObject.SetActive(value);
+    }
+
+    public void SetBuildingPopupViewActive(bool value)
+    {
+        buildingPopupView.gameObject.SetActive(value);
     }
 }

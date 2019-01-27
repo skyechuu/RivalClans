@@ -1,0 +1,43 @@
+{  
+   "buildings":[  
+      {  
+         "id":1000,
+         "category":0,
+         "buildingName":"Woodcutter",
+         "buildCost":{  
+            "wood":100,
+            "rock":0,
+            "coin":0
+         },
+         "produces": 50,
+         "produceRateInSeconds":2,
+         "maxAmount":10
+      },
+      {  
+         "id":1001,
+         "category":1,
+         "buildingName":"Quarry",
+         "buildCost":{  
+            "wood":200,
+            "rock":0,
+            "coin":150
+         },
+         "produces": 50,
+         "produceRateInSeconds":2,
+         "maxAmount":10
+      },
+      {  
+         "id":1002,
+         "category":1,
+         "buildingName":"Market",
+         "buildCost":{  
+            "wood":250,
+            "rock":350,
+            "coin":150
+         },
+         "produces": 50,
+         "produceRateInSeconds":2,
+         "maxAmount":1
+      }
+   ]
+}

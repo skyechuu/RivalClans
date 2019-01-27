@@ -19,6 +19,16 @@ public class Resource
         coin = _coin;
     }
 
+    public Resource Clone()
+    {
+        return new Resource()
+        {
+            wood = wood,
+            rock = rock,
+            coin = coin
+        };
+    }
+
     public void AddResource(int value, ResourceType type)
     {
         switch (type)

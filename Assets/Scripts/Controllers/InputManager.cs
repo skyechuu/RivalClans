@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InputManager : MonoBehaviour {
 
@@ -44,6 +45,92 @@ public class InputManager : MonoBehaviour {
 
     }
 
+    public static bool NoInputExists
+    {
+#if UNITY_EDITOR
+        get { return false; }
+#else
+        get
+        {
+            return Input.touchCount <= 0;
+        }
+#endif
+    }
+
+    public static Vector2 RawInputPosition
+    {
+#if UNITY_EDITOR
+        get { return Input.mousePosition; }
+#else
+        get { return Input.GetTouch(0).position; }
+#endif
+    }
+
+    public static bool IsInputStarted
+    {
+#if UNITY_EDITOR
+        get {
+            return Input.GetMouseButtonDown(0);
+        }
+#else
+        get { return Input.GetTouch(0).phase == TouchPhase.Began; }
+#endif
+    }
+
+    public static bool IsInputMoved
+    {
+#if UNITY_EDITOR
+        get { return Input.GetMouseButton(0) && (Mathf.Abs(Input.GetAxis("Mouse X")) > 0 || Mathf.Abs(Input.GetAxis("Mouse Y")) > 0); }
+#else
+        get { return Input.GetTouch(0).phase == TouchPhase.Moved; }
+#endif
+    }
+
+    public static bool IsInputEnded
+    {
+#if UNITY_EDITOR
+        get { return Input.GetMouseButtonUp(0); }
+#else
+        get { return Input.GetTouch(0).phase == TouchPhase.Ended; }
+#endif
+    }
+
+    public static bool IsOnUI
+    {
+
+#if UNITY_EDITOR
+        get { return EventSystem.current.IsPointerOverGameObject(); }
+#else
+        get { return EventSystem.current.IsPointerOverGameObject(0); }
+#endif
+    }
+
+
+    public Building GetSelectedBuilding()
+    {
+        return selectedBuilding;
+    }
+
+
+    bool IsOnGround()
+    {
+        var inputPosition = Camera.main.ScreenToWorldPoint(RawInputPosition);
+        return Physics.Raycast(inputPosition, Camera.main.transform.forward, out hit, float.MaxValue, groundLayer) && !IsOnUI;
+    }
+
+    bool IsOnBuilding()
+    {
+        var inputPosition = Camera.main.ScreenToWorldPoint(RawInputPosition);
+        return Physics.Raycast(inputPosition, Camera.main.transform.forward, out hit, float.MaxValue, buildingLayer) && !IsOnUI;
+    }
+    
+
+    Vector3 GetDelta()
+    {
+        return delta;
+    }
+
+
     private void HandleInput()
     {
         if (IsInputEnded)
@@ -64,7 +151,7 @@ public class InputManager : MonoBehaviour {
 
     private void HandleInputEnded()
     {
-        if (selectedBuilding && selectedBuilding.state == BuildingState.MOVE)
+        if (selectedBuilding && selectedBuilding.GetState() == BuildingState.MOVE)
         {
             selectedBuilding.OnMoveEnded();
         }
@@ -77,7 +164,7 @@ public class InputManager : MonoBehaviour {
         {
             if (selectedBuilding)
             {
-                if (selectedBuilding.state == BuildingState.MOVE)
+                if (selectedBuilding.GetState() == BuildingState.MOVE)
                 {
                     var position = hit.point - delta;
                     selectedBuilding.OnMove(position);
@@ -95,102 +182,41 @@ public class InputManager : MonoBehaviour {
                 delta = hit.point - selectedBuilding.transform.position;
                 selectedBuilding.OnMoveStarted();
             }
-            else if (selectedBuilding && selectedBuilding.state == BuildingState.MOVE)
+            else if (selectedBuilding && selectedBuilding.GetState() == BuildingState.MOVE)
             {
                 selectedBuilding.OnCancelMove();
             }
             else
             {
-                selectedBuilding = hit.transform.GetComponent<Building>();
-                delta = hit.point - selectedBuilding.transform.position;
-                GridManager.instance.VisualizeGridMap(selectedBuilding.data.coord, selectedBuilding.GetSize(), selectedBuilding.gameObject.GetInstanceID(), Color.yellow);
+                OnSelectBuilding();
             }
-        
+
         }
         else
         {
-            if (selectedBuilding && selectedBuilding.state == BuildingState.MOVE)
+            if (selectedBuilding && selectedBuilding.GetState() == BuildingState.MOVE)
                 selectedBuilding.OnCancelMove();
 
-            selectedBuilding = null;
-            GridManager.instance.ClearGrid();
+            OnDeselectBuilding();
         }
+    }
+
+    private void OnSelectBuilding()
+    {
+        selectedBuilding = hit.transform.GetComponent<Building>();
+        delta = hit.point - selectedBuilding.transform.position;
+        GridManager.instance.VisualizeGridMap(selectedBuilding.GetCoord(), selectedBuilding.GetSize(), selectedBuilding.gameObject.GetInstanceID(), Color.yellow);
+        GameViewManager.instance.SetBuildingPopupViewActive(true);
+    }
+
+    private void OnDeselectBuilding()
+    {
+        selectedBuilding = null;
+        GridManager.instance.ClearGrid();
     }
 
     private bool IsSameBuilding()
     {
         return hit.transform.GetComponent<Building>() == selectedBuilding;
-    }
-
-    bool NoInputExists
-    {
-#if UNITY_EDITOR
-        get { return false; }
-#else
-        get
-        {
-            return Input.touchCount <= 0;
-        }
-#endif
-    }
-
-    Vector2 RawInputPosition
-    {
-#if UNITY_EDITOR
-        get { return Input.mousePosition; }
-#else
-        get { return Input.GetTouch(0).position; }
-#endif
-    }
-
-    bool IsInputStarted
-    {
-#if UNITY_EDITOR
-        get {
-            return Input.GetMouseButtonDown(0);
-        }
-#else
-        get { return Input.GetTouch(0).phase == TouchPhase.Began; }
-#endif
-    }
-
-    static bool IsInputMoved
-    {
-#if UNITY_EDITOR
-        get { return Input.GetMouseButton(0) && (Mathf.Abs(Input.GetAxis("Mouse X")) > 0 || Mathf.Abs(Input.GetAxis("Mouse Y")) > 0); }
-#else
-        get { return Input.GetTouch(0).phase == TouchPhase.Moved; }
-#endif
-    }
-    
-    static bool IsInputEnded
-    {
-#if UNITY_EDITOR
-        get { return Input.GetMouseButtonUp(0); }
-#else
-        get { return Input.GetTouch(0).phase == TouchPhase.Ended; }
-#endif
-    }
-
-    bool IsOnGround()
-    {
-        var inputPosition = Camera.main.ScreenToWorldPoint(RawInputPosition);
-        return Physics.Raycast(inputPosition, Camera.main.transform.forward, out hit, float.MaxValue, groundLayer);
-    }
-
-    bool IsOnBuilding()
-    {
-        var inputPosition = Camera.main.ScreenToWorldPoint(RawInputPosition);
-        return Physics.Raycast(inputPosition, Camera.main.transform.forward, out hit, float.MaxValue, buildingLayer);
-    }
-
-    Vector3 GetDelta()
-    {
-        return delta;
-    } 
-    
-    public Building GetSelectedBuilding()
-    {
-        return selectedBuilding;
     }
 }

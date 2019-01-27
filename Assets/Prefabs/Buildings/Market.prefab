@@ -150,4 +150,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ecbcd629e9843c449996efe804717c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 6946178a6d007cf478344f1400f2dc76, type: 2}
+  data:
+    id: 0
+    category: 0
+    buildingName: 
+    buildCost:
+      wood: 0
+      rock: 0
+      coin: 0
+    produces:
+      wood: 0
+      rock: 0
+      coin: 0
+    produceRateInSeconds: 0
+    maxAmount: 0
+  dataId: 1002

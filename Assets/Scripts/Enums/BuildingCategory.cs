@@ -1,4 +1,4 @@
 ﻿public enum BuildingCategory{
-    Category1,
-    Category2
+    Category1 = 0,
+    Category2 = 1
 }

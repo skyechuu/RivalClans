@@ -12,7 +12,7 @@ public class ResourcesView : MonoBehaviour {
 
     Resource resource;
     
-	void Update()
+	void LateUpdate()
     {
         resource = ResourcesManager.instance.GetTotalResources();
         wood.text = string.Format("Wood: {0}", resource.wood.ToString());

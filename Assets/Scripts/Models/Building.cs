@@ -3,13 +3,20 @@
 
 public class Building : MonoBehaviour, IMoveable {
 
-    [SerializeField] public BuildingScriptableObject data;
+    public BuildingData data;
+    public int dataId;
 
-    public Resource buildCost;
-    public BuildingState state;
+    private BuildingState state;
+    private ResourceType currentResourceType;
+    private Coord coord;
 
-    private Coord oldCoord;
-    private float nextTick = 10;
+    Coord oldCoord;
+    float nextTick = 2;
+
+    void Start()
+    {
+        GetNextResourceType();
+    }
     
     void Update()
     {
@@ -24,8 +31,19 @@ public class Building : MonoBehaviour, IMoveable {
             {
                 ProduceResource();
                 nextTick = Time.time + data.produceRateInSeconds;
+                GetNextResourceType();
             }
         }
+    }
+
+    void GetNextResourceType()
+    {
+        ResourceType type;
+        if ((BuildingCategory)data.category == BuildingCategory.Category2)
+            type = ResourceType.COIN;
+        else
+            type = SelectRandomResourceType();
+        currentResourceType = type;
     }
 
     ResourceType SelectRandomResourceType()
@@ -36,35 +54,16 @@ public class Building : MonoBehaviour, IMoveable {
 
     void ProduceResource()
     {
-        ResourceType type;
-        if(data.category == BuildingCategory.Category2)
-            type = ResourceType.COIN;
-        else
-            type = SelectRandomResourceType();
-
-        int value = 0;
-        switch (type)
-        {
-            case ResourceType.COIN:
-                value = data.produces.coin;
-                break;
-            case ResourceType.ROCK:
-                value = data.produces.rock;
-                break;
-            case ResourceType.WOOD:
-                value = data.produces.wood;
-                break;
-            default:
-                break;
-        }
-        ResourcesManager.instance.GetTotalResources().AddResource(value, type);
+        int value = data.produces;
+        
+        ResourcesManager.instance.GetTotalResources().AddResource(value, currentResourceType);
     }
 
     public void OnMoveStarted()
     {
         if(state != BuildingState.MOVE)
         {
-            oldCoord = data.coord;
+            oldCoord = coord;
             state = BuildingState.MOVE;
         }
     }
@@ -78,16 +77,16 @@ public class Building : MonoBehaviour, IMoveable {
             if (available)
             {
                 SetPosition(_coord);
-                GridManager.instance.VisualizeGridMap(data.coord, GetSize(), gameObject.GetInstanceID());
+                GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
             }
         }
     }
 
     public void OnMoveEnded()
     {
-        if (!oldCoord.Equals(data.coord))
+        if (!oldCoord.Equals(coord))
         {
-            bool available = GridManager.instance.IsAreaAvailable(data.coord, GetSize(), gameObject.GetInstanceID());
+            bool available = GridManager.instance.IsAreaAvailable(coord, GetSize(), gameObject.GetInstanceID());
             if (available)
             {
                 GridManager.instance.UpdateBuilding(this, UpdateType.CHANGE);
@@ -97,7 +96,7 @@ public class Building : MonoBehaviour, IMoveable {
         else
         {
             state = BuildingState.IDLE;
-            GridManager.instance.VisualizeGridMap(data.coord, GetSize(), gameObject.GetInstanceID());
+            GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
         }
     }
 
@@ -105,24 +104,24 @@ public class Building : MonoBehaviour, IMoveable {
     {
         state = BuildingState.IDLE;
         SetPosition(oldCoord);
-        GridManager.instance.VisualizeGridMap(data.coord, GetSize(), gameObject.GetInstanceID());
+        GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
     }
 
     public void SetPosition(Vector3 worldPosition)
     {
         transform.position = worldPosition;
-        data.coord = Tools.GetGridCoord(worldPosition, GetSize());
+        coord = Tools.GetGridCoord(worldPosition, GetSize());
     }
 
     public void SetPosition(Coord _coord)
     {
         transform.position = Tools.GetWorldPosition(_coord, GetSize());
-        data.coord = _coord;
+        coord = _coord;
     }
 
     public int GetSize()
     {
-        switch (data.category)
+        switch ((BuildingCategory)data.category)
         {
             case BuildingCategory.Category1:
                 return 1;   // 1x1
@@ -134,4 +133,28 @@ public class Building : MonoBehaviour, IMoveable {
         }
     }
 
+    public BuildingState GetState()
+    {
+        return state;
+    }
+
+    public Coord GetCoord()
+    {
+        return coord;
+    }
+
+    public void SetCoord(Coord _coord)
+    {
+        coord = _coord;
+    }
+
+    public BuildingCategory GetCategory()
+    {
+        return (BuildingCategory)data.category;
+    }
+
+    public ResourceType GetCurrentResourceType()
+    {
+        return currentResourceType;
+    }
 }

@@ -14,7 +14,7 @@ MonoBehaviour:
   category: 0
   buildingName: Woodcutter
   buildCost:
-    wood: 10
+    wood: 100
     rock: 0
     coin: 0
   produces:

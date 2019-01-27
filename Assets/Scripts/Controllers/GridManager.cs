@@ -63,12 +63,11 @@ public class GridManager : MonoBehaviour {
 
                 if(selectedBuilding != null)
                 {
-                    if (selectedBuilding.data.coord.Equals(new Coord(i, j)))
+                    if (selectedBuilding.GetCoord().Equals(new Coord(i, j)))
                     {
                         gridMap[i, j].SetColor(Color.cyan);
                     }
                 }
-
             }
         }
     }
@@ -129,10 +128,10 @@ public class GridManager : MonoBehaviour {
         var occupied = 0;
         while (occupied <= initialOccupyAmount)
         {
-            var buildingIndex = (initialOccupyAmount - occupied > 3) ? UnityEngine.Random.Range(0, SessionManager.instance.availableBuildings.Count) : 0;   // 0 = index where 1x1 building stored
-            var building = SessionManager.instance.availableBuildings[buildingIndex];
+            var buildingIndex = (initialOccupyAmount - occupied > 3) ? UnityEngine.Random.Range(0, DatabaseManager.instance.buildingObjects.Count) : 0;   // 0 = index where 1x1 building stored
+            var building = DatabaseManager.instance.buildingObjects[buildingIndex];
+            building.data = DatabaseManager.instance.FindBuildingData(building.dataId);
             Coord coord = FindRandomArea(building);
-            
             BuildingManager.instance.Build(building, coord);
             occupied += (int)Mathf.Pow(building.GetSize(), 2);
         }
@@ -214,21 +213,20 @@ public class GridManager : MonoBehaviour {
 
     private void AddBuilding(Building building)
     {
-        var position = building.data.coord;
+        var position = building.GetCoord();
         var buildingSize = building.GetSize();
         for (int i = position.x; i < position.x + buildingSize; i++)
         {
             for (int j = position.y; j < position.y + buildingSize; j++)
             {
                 grids[i, j] = building.gameObject.GetInstanceID();
-                
             }
         }
     }
 
     private void RemoveBuilding(Building building)
     {
-        var position = building.data.coord;
+        var position = building.GetCoord();
         var buildingSize = building.GetSize();
         for (int i = position.x; i < position.x + buildingSize; i++)
         {
