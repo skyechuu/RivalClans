@@ -42,6 +42,7 @@ public class BuildingManager : MonoBehaviour
         SessionManager.ChangeCategoryCount(building.GetCategory(), 1);
         ApplyInterestToBuildingCategory(building.GetCategory());
         ChangeRemainingOfBuilding(_building, -1);
+        SessionManager.instance.SaveSession();
 
         InputManager.instance.OnSelectBuilding(building);
     }
@@ -59,6 +60,7 @@ public class BuildingManager : MonoBehaviour
         SessionManager.ChangeCategoryCount(building.GetCategory(), -1);
         ApplyInterestToBuildingCategory(building.GetCategory());
         Destroy(building.gameObject);
+        SessionManager.instance.SaveSession();
     }
 
     /// <summary>

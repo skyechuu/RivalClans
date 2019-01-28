@@ -219,8 +219,10 @@ public class GridManager : MonoBehaviour {
         else if (updateType == UpdateType.CHANGE)
         {
             MoveBuilding(building);
+            SessionManager.instance.SaveSession();
         }
-        Debug.LogWarning("Building "+building.name+" (" + building.GetInstanceID() + ") updated. Update Method: " + updateType.ToString());
+        //Debug.LogWarning("Building "+building.name+" (" + building.GetInstanceID() + ") updated. Update Method: " + updateType.ToString());
+        
     }
 
     private void AddBuilding(Building building)

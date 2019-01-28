@@ -32,12 +32,6 @@ public class SessionManager : MonoBehaviour
         DatabaseManager.instance.LoadDatabase(OnDatabaseReady);
     }
 
-    void OnApplicationFocus(bool hasFocus)
-    {
-        if (!hasFocus)
-            SaveSession();
-    }
-
     void OnDatabaseReady()
     {
         if (PlayerPrefs.GetInt("SESSION_AVAILABLE", 0) == 1)
@@ -92,6 +86,12 @@ public class SessionManager : MonoBehaviour
         var filePath = Path.Combine(Application.persistentDataPath, "game.session");
         var formatter = new BinaryFormatter();
         var file = File.Open(filePath, FileMode.Open);
+        if (file.Length == 0)
+        {
+            LoadDefault();
+            PlayerPrefs.SetInt("SESSION_AVAILABLE", 0);
+            return;
+        }
         data = (SessionData)formatter.Deserialize(file);
         file.Close();
 
