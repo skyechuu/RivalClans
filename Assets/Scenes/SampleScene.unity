@@ -1910,7 +1910,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 519420031}
   cameraSensitivity: 6
-  state: 0
+  state: 2
 --- !u!1 &859639177
 GameObject:
   m_ObjectHideFlags: 0
