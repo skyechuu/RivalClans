@@ -40,6 +40,9 @@ public class GridManager : MonoBehaviour {
         InitiallyOccupyGrids();
     }
 
+    /// <summary>
+    /// Creates grid map with given dimensions. Dimensions declared at GameConstants.
+    /// </summary>
     void CreateGridMap()
     {
         grids = new int[GameConstants.GRID_DIMENSION_X, GameConstants.GRID_DIMENSION_Y];
@@ -58,32 +61,12 @@ public class GridManager : MonoBehaviour {
         //GetComponent<BoxCollider>().size = new Vector3(GameConstants.GRID_DIMENSION_X * GameConstants.GRID_UNIT, 0.1f, GameConstants.GRID_DIMENSION_Y * GameConstants.GRID_UNIT);
     }
 
-    public void VisualizeGridxMap()
-    {
-        Building selectedBuilding = InputManager.instance.GetSelectedBuilding();
-
-        for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)
-        {
-            for (int j = 0; j < GameConstants.GRID_DIMENSION_Y; j++)
-            {
-                if (grids[i, j] == 0)
-                    gridMap[i, j].SetColor(Color.white);
-                else
-                {
-                    gridMap[i, j].SetColor(Color.yellow);
-                }
-
-                if(selectedBuilding != null)
-                {
-                    if (selectedBuilding.GetCoord().Equals(new Coord(i, j)))
-                    {
-                        gridMap[i, j].SetColor(Color.cyan);
-                    }
-                }
-            }
-        }
-    }
-
+    /// <summary>
+    /// Visualize the grid map with colors
+    /// </summary>
+    /// <param name="position">Building coordinate</param>
+    /// <param name="buildingSize">Building size. Eg: buildingsize=2 means 2x2 grid are used by building.</param>
+    /// <param name="instance">Building game object instance ID</param>
     public void VisualizeGridMap(Coord position, int buildingSize, int instance)
     {
         ClearGrid();
@@ -101,7 +84,13 @@ public class GridManager : MonoBehaviour {
             }
         }
     }
-
+    /// <summary>
+    /// Visualize the grid map with colors
+    /// </summary>
+    /// <param name="position">Building coordinate</param>
+    /// <param name="buildingSize">Building size. Eg: buildingsize=2 means 2x2 grid are used by building.</param>
+    /// <param name="instance">Building game object instance ID</param>
+    /// <param name="c">Different color</param>
     public void VisualizeGridMap(Coord position, int buildingSize, int instance, Color c)
     {
         ClearGrid();
@@ -120,6 +109,9 @@ public class GridManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Clears grid to its default color.
+    /// </summary>
     public void ClearGrid()
     {
         for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)
@@ -131,6 +123,10 @@ public class GridManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Initially occupy grids with objects. Objects used in that function are buildings.
+    /// Assumed DatabaseManager.instance.buildingObjects[0] is a 1x1 object.
+    /// </summary>
     void InitiallyOccupyGrids()
     {
         if (percentageOfInitiallyOccupiedGrids == 0)
@@ -149,17 +145,28 @@ public class GridManager : MonoBehaviour {
         }
     }
 
-    public Coord FindRandomArea(Building b)
+    /// <summary>
+    /// Finds random and free grid area for given building
+    /// </summary>
+    /// <param name="building"></param>
+    /// <returns></returns>
+    public Coord FindRandomArea(Building building)
     {
         int x, y;
         x = UnityEngine.Random.Range(0, GameConstants.GRID_DIMENSION_X);
         y = UnityEngine.Random.Range(0, GameConstants.GRID_DIMENSION_Y);
-        if (!IsAreaAvailable(new Coord(x, y), b.GetSize(), 0)){
-            return FindRandomArea(b);
+        if (!IsAreaAvailable(new Coord(x, y), building.GetSize(), 0)){
+            return FindRandomArea(building);
         }
         return new Coord(x, y);
     }
 
+    /// <summary>
+    /// Gets instance by given x and y world positions from grid.
+    /// </summary>
+    /// <param name="posX"></param>
+    /// <param name="posY"></param>
+    /// <returns></returns>
     public int GetInstanceFromGrid(float posX, float posY)
     {
         int x = (int)(posX - (-GameConstants.GRID_DIMENSION_X / 2 + 0.5f));
@@ -167,11 +174,24 @@ public class GridManager : MonoBehaviour {
         return grids[x, y];
     }
 
+    /// <summary>
+    /// Gets instance by given x and y coordinates from grid.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public int GetInstanceFromGrid(int x, int y)
     {
         return grids[x, y];
     }
 
+    /// <summary>
+    /// Checks if area by given coord and building size is available.
+    /// </summary>
+    /// <param name="position">Building coordinate</param>
+    /// <param name="buildingSize">Building size. Eg: buildingsize=2 means 2x2 grid are used by building.</param>
+    /// <param name="instance">Building instance.</param>
+    /// <returns></returns>
     public bool IsAreaAvailable(Coord position, int buildingSize, int instance)
     {
         for (int i = position.x; i < position.x + buildingSize; i++)
@@ -191,6 +211,12 @@ public class GridManager : MonoBehaviour {
         return true;
     }
 
+    /// <summary>
+    /// Checks if given area is in grid dimensions.
+    /// </summary>
+    /// <param name="position">Building coordinate.</param>
+    /// <param name="buildingSize">Building size. Eg: buildingsize=2 means 2x2 grid are used by building.</param>
+    /// <returns></returns>
     public bool IsAreaInGrid(Coord position, int buildingSize)
     {
         for (int i = position.x; i < position.x + buildingSize; i++)
@@ -206,6 +232,11 @@ public class GridManager : MonoBehaviour {
         return true;
     }
 
+    /// <summary>
+    /// Updates building information depending on UpdateType
+    /// </summary>
+    /// <param name="building"></param>
+    /// <param name="updateType"></param>
     public void UpdateBuilding(Building building, UpdateType updateType)
     {
         if(updateType == UpdateType.NEW)
@@ -225,6 +256,10 @@ public class GridManager : MonoBehaviour {
         
     }
 
+    /// <summary>
+    /// Adds building instance to grid.
+    /// </summary>
+    /// <param name="building"></param>
     private void AddBuilding(Building building)
     {
         var position = building.GetCoord();
@@ -238,6 +273,10 @@ public class GridManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Removes building instance from grid.
+    /// </summary>
+    /// <param name="building"></param>
     private void RemoveBuilding(Building building)
     {
         var position = building.GetCoord();
@@ -251,6 +290,10 @@ public class GridManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Moves building instance on grid.
+    /// </summary>
+    /// <param name="building"></param>
     private void MoveBuilding(Building building)
     {
         for (int i = 0; i < GameConstants.GRID_DIMENSION_Y; i++)
@@ -264,6 +307,11 @@ public class GridManager : MonoBehaviour {
         AddBuilding(building);
     }
 
+    /// <summary>
+    /// Get building instance from grid with given ID.
+    /// </summary>
+    /// <param name="instanceID"></param>
+    /// <returns></returns>
     public Building GetBuilding(int instanceID)
     {
         for (int i = 0; i < GameConstants.GRID_DIMENSION_X; i++)

@@ -25,11 +25,20 @@ public class DatabaseManager : MonoBehaviour
             instance = this;
     }
 
+    /// <summary>
+    /// Request LoadBuildingListJson and forwards onComplete action.
+    /// </summary>
+    /// <param name="onComplete"></param>
     public void LoadDatabase(Action onComplete)
     {
         StartCoroutine(LoadBuildingListJson(onComplete));
     }
 
+    /// <summary>
+    /// Load building list from .json file. Calls onComplete after loading is done.
+    /// </summary>
+    /// <param name="onComplete"></param>
+    /// <returns></returns>
     public IEnumerator LoadBuildingListJson(Action onComplete)
     {
         var filePath = Path.Combine(Application.streamingAssetsPath, buildingsJson);
@@ -53,6 +62,11 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Finds BuildingData with given ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public static BuildingData FindBuildingData(int id)
     {
         foreach(var data in buildingsData.buildings)
@@ -64,6 +78,11 @@ public class DatabaseManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Finds non-instanced Building with given ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public Building FindBuildingObject(int id)
     {
         foreach(var building in buildingObjects)

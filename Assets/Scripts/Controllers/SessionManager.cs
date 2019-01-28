@@ -32,6 +32,9 @@ public class SessionManager : MonoBehaviour
         DatabaseManager.instance.LoadDatabase(OnDatabaseReady);
     }
 
+    /// <summary>
+    /// Called when database is ready.
+    /// </summary>
     void OnDatabaseReady()
     {
         if (PlayerPrefs.GetInt("SESSION_AVAILABLE", 0) == 1)
@@ -46,6 +49,9 @@ public class SessionManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Saves current session.
+    /// </summary>
     public void SaveSession()
     {
         print("Save in progress...");
@@ -80,10 +86,19 @@ public class SessionManager : MonoBehaviour
         print("Session Saved.");
     }
 
+    /// <summary>
+    /// Loads last session. If Load fails, Loads default data.
+    /// </summary>
     void LoadSession()
     {
         print("Load in progress...");
         var filePath = Path.Combine(Application.persistentDataPath, "game.session");
+        if (!File.Exists(filePath))
+        {
+            LoadDefault();
+            PlayerPrefs.SetInt("SESSION_AVAILABLE", 0);
+            return;
+        }
         var formatter = new BinaryFormatter();
         var file = File.Open(filePath, FileMode.Open);
         if (file.Length == 0)
@@ -96,18 +111,14 @@ public class SessionManager : MonoBehaviour
         file.Close();
 
         instancedBuildings = new Dictionary<int, Building>();
-
-
-        print("Load in progress... 1");
+        
         foreach (var item in data.savedBuildingCoordinates)
         {
             var building = DatabaseManager.instance.FindBuildingObject(item.Value);
             if (building)
                 BuildingManager.instance.Build(building, item.Key);
         }
-
-
-        print("Load in progress... 2");
+        
         availableBuildings = new Dictionary<Building, BuildForSaleInfo>();
         foreach (var item in DatabaseManager.instance.buildingObjects)
         {
@@ -127,22 +138,21 @@ public class SessionManager : MonoBehaviour
             }
             availableBuildings.Add(item, info);
         }
-
-
-        print("Load in progress... 3");
+        
         buildingCounts = new Dictionary<BuildingCategory, int>();
         foreach(var item in data.savedBuildingCounts)
         {
             buildingCounts.Add((BuildingCategory)item.Key, item.Value);
         }
-
-
-        print("Load in progress... 4");
+        
         ResourcesManager.instance.SetTotalResources(data.savedResources);
 
         print("Session Loaded.");
     }
 
+    /// <summary>
+    /// Loads default data
+    /// </summary>
     void LoadDefault()
     {
         buildingCounts = new Dictionary<BuildingCategory, int>();
@@ -154,6 +164,9 @@ public class SessionManager : MonoBehaviour
         LoadAvailableBuildings();
     }
 
+    /// <summary>
+    /// Load available building information from database.
+    /// </summary>
     void LoadAvailableBuildings()
     {
         availableBuildings = new Dictionary<Building, BuildForSaleInfo>();
@@ -168,21 +181,38 @@ public class SessionManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Saves building instance to grid.
+    /// </summary>
+    /// <param name="building"></param>
     public static void AddBuildingInstance(Building building)
     {
         instancedBuildings.Add(building.gameObject.GetInstanceID(), building);
     }
 
+    /// <summary>
+    /// Removes building instance from grid.
+    /// </summary>
+    /// <param name="building"></param>
     public static void RemoveBuildingInstance(Building building)
     {
         instancedBuildings.Remove(building.gameObject.GetInstanceID());
     }
 
+    /// <summary>
+    /// Get Instanced buildings.
+    /// </summary>
+    /// <returns></returns>
     public static Dictionary<int, Building> GetInstancedBuildings()
     {
         return instancedBuildings;
     }
 
+    /// <summary>
+    /// Change the amount of building count in given category.
+    /// </summary>
+    /// <param name="category"></param>
+    /// <param name="value"></param>
     public static void ChangeCategoryCount(BuildingCategory category, int value)
     {
         if (buildingCounts[category] + value <= 0)
@@ -191,6 +221,11 @@ public class SessionManager : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Find instanced building from grid by given ID.
+    /// </summary>
+    /// <param name="instanceID"></param>
+    /// <returns></returns>
     public Building FindBuildingWithInstanceID(int instanceID)
     {
         if (instancedBuildings.ContainsKey(instanceID))
@@ -198,6 +233,9 @@ public class SessionManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Prints instanced buildings.
+    /// </summary>
     public void PrintInstancedBuildings()
     {
         string result = "";
@@ -208,6 +246,11 @@ public class SessionManager : MonoBehaviour
         UnityEngine.Debug.Log(result);
     }
 
+    /// <summary>
+    /// Change build cost of buildings.
+    /// </summary>
+    /// <param name="building"></param>
+    /// <param name="newCost"></param>
     public void ChangeBuildCost(Building building, Resource newCost)
     {
         BuildForSaleInfo info = availableBuildings[building];
@@ -215,6 +258,11 @@ public class SessionManager : MonoBehaviour
         availableBuildings[building] = info;
     }
 
+    /// <summary>
+    /// Change the remaining amount of buildings.
+    /// </summary>
+    /// <param name="building"></param>
+    /// <param name="value"></param>
     public void ChangeRemainingAmount(Building building, int value)
     {
         BuildForSaleInfo info = availableBuildings[building];
@@ -222,6 +270,11 @@ public class SessionManager : MonoBehaviour
         availableBuildings[building] = info;
     }
 
+    /// <summary>
+    /// Find non-instanced buildings by given ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public Building FindNonInstancedByID(int id)
     {
         foreach(var item in availableBuildings)
