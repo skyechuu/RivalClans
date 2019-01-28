@@ -19,5 +19,6 @@
 * Saving current session is not implemented for idle state. Save only occurs after some specific actions to decrease load on disk.
 * Unique colored popup menu for Category2 buildings is not implemented.
 * Pre-occupy objects randomly selected from buildings. Therefore, I didn't let those objects change the remaining amount of available buildings and add interests of building costs.
+* Not 100% commented.
 
 
