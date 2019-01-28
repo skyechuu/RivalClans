@@ -29,16 +29,16 @@ public class SessionManager : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(DatabaseManager.LoadBuildingListJson());
-        LoadData();
+        DatabaseManager.instance.LoadDatabase(OnDatabaseReady);
     }
 
-    void OnApplicationQuit()
+    void OnApplicationFocus(bool hasFocus)
     {
-        SaveSession();
+        if (!hasFocus)
+            SaveSession();
     }
 
-    void LoadData()
+    void OnDatabaseReady()
     {
         if (PlayerPrefs.GetInt("SESSION_AVAILABLE", 0) == 1)
         {
@@ -52,7 +52,7 @@ public class SessionManager : MonoBehaviour
         }
     }
 
-    void SaveSession()
+    public void SaveSession()
     {
         print("Save in progress...");
         SessionData data = new SessionData();
@@ -88,6 +88,7 @@ public class SessionManager : MonoBehaviour
 
     void LoadSession()
     {
+        print("Load in progress...");
         var filePath = Path.Combine(Application.persistentDataPath, "game.session");
         var formatter = new BinaryFormatter();
         var file = File.Open(filePath, FileMode.Open);
@@ -96,6 +97,8 @@ public class SessionManager : MonoBehaviour
 
         instancedBuildings = new Dictionary<int, Building>();
 
+
+        print("Load in progress... 1");
         foreach (var item in data.savedBuildingCoordinates)
         {
             var building = DatabaseManager.instance.FindBuildingObject(item.Value);
@@ -103,6 +106,8 @@ public class SessionManager : MonoBehaviour
                 BuildingManager.instance.Build(building, item.Key);
         }
 
+
+        print("Load in progress... 2");
         availableBuildings = new Dictionary<Building, BuildForSaleInfo>();
         foreach (var item in DatabaseManager.instance.buildingObjects)
         {
@@ -123,12 +128,16 @@ public class SessionManager : MonoBehaviour
             availableBuildings.Add(item, info);
         }
 
+
+        print("Load in progress... 3");
         buildingCounts = new Dictionary<BuildingCategory, int>();
         foreach(var item in data.savedBuildingCounts)
         {
             buildingCounts.Add((BuildingCategory)item.Key, item.Value);
         }
 
+
+        print("Load in progress... 4");
         ResourcesManager.instance.SetTotalResources(data.savedResources);
 
         print("Session Loaded.");

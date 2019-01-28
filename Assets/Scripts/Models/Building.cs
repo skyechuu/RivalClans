@@ -87,7 +87,7 @@ public class Building : MonoBehaviour, IMoveable {
         }
     }
 
-    public void OnMoveEnded()
+    public bool OnMoveEnded()
     {
         if (!oldCoord.Equals(coord))
         {
@@ -97,12 +97,16 @@ public class Building : MonoBehaviour, IMoveable {
                 GridManager.instance.UpdateBuilding(this, UpdateType.CHANGE);
                 state = BuildingState.IDLE;
                 GridManager.instance.ClearGrid();
+                return true;
             }
+            else
+                return false;
         }
         else
         {
             state = BuildingState.IDLE;
             GridManager.instance.VisualizeGridMap(coord, GetSize(), gameObject.GetInstanceID());
+            return true;
         }
     }
 

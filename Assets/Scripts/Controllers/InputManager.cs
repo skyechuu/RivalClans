@@ -164,7 +164,6 @@ public class InputManager : MonoBehaviour {
             {
                 if (selectedBuilding.GetState() == BuildingState.MOVE)
                 {
-                    print(delta);
                     var position = hit.point - delta;
                     selectedBuilding.OnMove(position);
                 }

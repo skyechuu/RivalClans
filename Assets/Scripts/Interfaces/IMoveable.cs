@@ -7,6 +7,6 @@ interface IMoveable
 {
     void OnMoveStarted();
     void OnMove(UnityEngine.Vector3 position);
-    void OnMoveEnded();
+    bool OnMoveEnded();
     void OnCancelMove();
 }

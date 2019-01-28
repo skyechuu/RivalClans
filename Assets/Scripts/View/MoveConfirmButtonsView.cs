@@ -26,9 +26,12 @@ public class MoveConfirmButtonsView : MonoBehaviour {
 
     public void OnApply()
     {
-        building.OnMoveEnded();
-        GameViewManager.instance.SetMoveConfirmButtonViewActive(false);
-        InputManager.instance.OnDeselectBuilding();
+        var successful = building.OnMoveEnded();
+        if (successful)
+        {
+            GameViewManager.instance.SetMoveConfirmButtonViewActive(false);
+            InputManager.instance.OnDeselectBuilding();
+        }
     }
 
     public void Move()

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -24,7 +25,12 @@ public class DatabaseManager : MonoBehaviour
             instance = this;
     }
 
-    public static IEnumerator LoadBuildingListJson()
+    public void LoadDatabase(Action onComplete)
+    {
+        StartCoroutine(LoadBuildingListJson(onComplete));
+    }
+
+    public IEnumerator LoadBuildingListJson(Action onComplete)
     {
         var filePath = Path.Combine(Application.streamingAssetsPath, buildingsJson);
         
@@ -34,20 +40,21 @@ public class DatabaseManager : MonoBehaviour
             UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequest.Get(filePath);
             yield return www.SendWebRequest();
             jsonData = www.downloadHandler.text;
-            //print(jsonData);
+            print(jsonData);
             buildingsData = JsonUtility.FromJson<BuildingsData>(jsonData);
+            onComplete();
         }
         else
         {
             jsonData = System.IO.File.ReadAllText(filePath);
-            //print(jsonData);
+            print(jsonData);
             buildingsData = JsonUtility.FromJson<BuildingsData>(jsonData);
+            onComplete();
         }
     }
 
     public static BuildingData FindBuildingData(int id)
     {
-        
         foreach(var data in buildingsData.buildings)
         {
             if (data.id == id)
