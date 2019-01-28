@@ -17,6 +17,9 @@ public class MoveConfirmButtonsView : MonoBehaviour {
             Move();
     }
 
+    /// <summary>
+    /// On click Cancel button.
+    /// </summary>
     public void OnCancel()
     {
         building.OnCancelMove();
@@ -24,6 +27,9 @@ public class MoveConfirmButtonsView : MonoBehaviour {
         GameViewManager.instance.SetBuildingPopupViewActive(true);
     }
 
+    /// <summary>
+    /// On click Apply button.
+    /// </summary>
     public void OnApply()
     {
         var successful = building.OnMoveEnded();
@@ -34,7 +40,10 @@ public class MoveConfirmButtonsView : MonoBehaviour {
         }
     }
 
-    public void Move()
+    /// <summary>
+    /// Moves with selected building.
+    /// </summary>
+    void Move()
     {
         var viewportPoint = Camera.main.WorldToViewportPoint(building.transform.position);
         var canvas = transform.parent.GetComponent<RectTransform>();

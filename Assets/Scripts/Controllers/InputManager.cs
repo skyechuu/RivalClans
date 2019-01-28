@@ -42,7 +42,7 @@ public class InputManager : MonoBehaviour {
         }
 
     }
-
+    
     public static bool NoInputExists
     {
 #if UNITY_EDITOR

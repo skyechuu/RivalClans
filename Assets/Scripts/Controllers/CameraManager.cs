@@ -19,11 +19,11 @@ public class CameraManager : MonoBehaviour {
         if (!camera)
             camera = Camera.main;
 	}
-	
-	void Update () {
-		
-	}
 
+    /// <summary>
+    /// Move camera by given delta value.
+    /// </summary>
+    /// <param name="delta"></param>
     public void MoveCamera(Vector3 delta)
     {
         camera.transform.position += (camera.transform.right * -delta.x + camera.transform.up * -delta.z) * Time.deltaTime * cameraSensitivity;
