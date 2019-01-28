@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 public class BuildingButtonView : MonoBehaviour
@@ -9,6 +10,15 @@ public class BuildingButtonView : MonoBehaviour
     [SerializeField] Text rockText;
     [SerializeField] Text coinText;
     [SerializeField] Text remainingAmountText;
+
+    void OnValidate()
+    {
+        Assert.IsNotNull(title, "title is set to null.");
+        Assert.IsNotNull(woodText, "woodText is set to null.");
+        Assert.IsNotNull(rockText, "rockText is set to null.");
+        Assert.IsNotNull(coinText, "coinText is set to null.");
+        Assert.IsNotNull(remainingAmountText, "remainingAmountText is set to null.");
+    }
 
     void OnEnable()
     {

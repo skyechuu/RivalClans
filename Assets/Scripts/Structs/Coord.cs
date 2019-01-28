@@ -37,9 +37,4 @@ public struct Coord
         Coord _coord = (Coord)obj;
         return _coord.x == x && _coord.y == y;
     }
-
-    public override int GetHashCode()
-    {
-        return base.GetHashCode();
-    }
 }

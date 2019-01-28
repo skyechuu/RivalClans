@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-
+using UnityEngine.Assertions;
 
 public class DatabaseManager : MonoBehaviour
 {
     public static DatabaseManager instance;
-
-    public List<Building> buildingObjects = new List<Building>();
     public static BuildingsData buildingsData;
 
+    public List<Building> buildingObjects = new List<Building>();
+    
     const string buildingsJson = "buildings.json";
+
+    void OnValidate()
+    {
+        Assert.IsFalse(buildingObjects.Count == 0, "buildingObjects has no member.");
+    }
 
     void Awake()
     {

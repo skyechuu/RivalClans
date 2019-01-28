@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 public class BuildingPopupMenuView : MonoBehaviour {
@@ -13,6 +11,15 @@ public class BuildingPopupMenuView : MonoBehaviour {
     [SerializeField] Text buildCostText;
     [SerializeField] Text productionText;
     [SerializeField] Text rateText;
+
+    void OnValidate()
+    {
+        Assert.IsNotNull(nameText, "nameText is set to null.");
+        Assert.IsNotNull(categoryText, "categoryText is set to null.");
+        Assert.IsNotNull(buildCostText, "buildCostText is set to null.");
+        Assert.IsNotNull(productionText, "productionText is set to null.");
+        Assert.IsNotNull(rateText, "rateText is set to null.");
+    }
 
     void OnEnable () {
         SetBuilding(InputManager.instance.GetSelectedBuilding());

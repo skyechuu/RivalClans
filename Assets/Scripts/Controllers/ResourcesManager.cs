@@ -5,7 +5,7 @@ public class ResourcesManager : MonoBehaviour {
     public static ResourcesManager instance;
 
     [SerializeField] Resource totalResources;
-
+    
     void Awake()
     {
         if (instance == null)

@@ -1,5 +1,4 @@
-﻿
-[System.Serializable]
+﻿[System.Serializable]
 public class BuildingData 
 {
     public int id;

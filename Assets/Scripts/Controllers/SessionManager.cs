@@ -25,8 +25,6 @@ public class SessionManager : MonoBehaviour
     {
         if (instance == null)
             instance = this;
-
-        
     }
 
     void Start()
@@ -56,6 +54,7 @@ public class SessionManager : MonoBehaviour
 
     void SaveSession()
     {
+        print("Save in progress...");
         SessionData data = new SessionData();
         data.savedBuildingCoordinates = new Dictionary<Coord, int>();
         foreach (var item in instancedBuildings)
@@ -170,6 +169,19 @@ public class SessionManager : MonoBehaviour
         instancedBuildings.Remove(building.gameObject.GetInstanceID());
     }
 
+    public static Dictionary<int, Building> GetInstancedBuildings()
+    {
+        return instancedBuildings;
+    }
+
+    public static void ChangeCategoryCount(BuildingCategory category, int value)
+    {
+        if (buildingCounts[category] + value <= 0)
+            buildingCounts[category] = 0;
+        buildingCounts[category] += value;
+        
+    }
+
     public Building FindBuildingWithInstanceID(int instanceID)
     {
         if (instancedBuildings.ContainsKey(instanceID))
@@ -185,11 +197,6 @@ public class SessionManager : MonoBehaviour
             result += item.Key.ToString() + " : " + item.Value + "\n";
         }
         UnityEngine.Debug.Log(result);
-    }
-
-    public static Dictionary<int, Building> GetInstancedBuildings()
-    {
-        return instancedBuildings;
     }
 
     public void ChangeBuildCost(Building building, Resource newCost)
@@ -216,12 +223,5 @@ public class SessionManager : MonoBehaviour
         return null;
     }
 
-    public static void ChangeCategoryCount(BuildingCategory category, int value)
-    {
-        if (buildingCounts[category] + value <= 0)
-            buildingCounts[category] = 0;
-        buildingCounts[category] += value;
-        
-    }
     
 }

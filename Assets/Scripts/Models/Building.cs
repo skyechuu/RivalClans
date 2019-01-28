@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using UnityEngine.Assertions;
 
 public class Building : MonoBehaviour, IMoveable {
 
@@ -11,7 +11,12 @@ public class Building : MonoBehaviour, IMoveable {
     private Coord coord;
 
     Coord oldCoord;
-    float nextTick = 2;
+    float nextTick = 10;
+
+    void OnValidate()
+    {
+        Assert.IsFalse(dataId == 0, "dataId is set to 0.");
+    }
 
     void Start()
     {

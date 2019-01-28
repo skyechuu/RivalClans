@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class GridManager : MonoBehaviour {
 
@@ -16,7 +15,12 @@ public class GridManager : MonoBehaviour {
 
     // for visualization
     Grid[,] gridMap;
-    
+
+    void OnValidate()
+    {
+        Assert.IsNotNull(gridPrefab, "gridPrefab is set to null.");
+    }
+
     void Awake()
     {
         if (instance == null)

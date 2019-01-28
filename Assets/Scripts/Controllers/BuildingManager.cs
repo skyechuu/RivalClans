@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class BuildingManager : MonoBehaviour
 {
     public static BuildingManager instance;
-
-
+    
     void Awake()
     {
         if (instance == null)

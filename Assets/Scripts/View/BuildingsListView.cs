@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 
 public class BuildingsListView : MonoBehaviour {
 
     [SerializeField] Transform contentList;
     [SerializeField] GameObject buildingViewPrefab;
 
+    void OnValidate()
+    {
+        Assert.IsNotNull(contentList, "contentList is set to null.");
+        Assert.IsNotNull(buildingViewPrefab, "buildingViewPrefab is set to null.");
+    }
 
     void OnEnable()
     {

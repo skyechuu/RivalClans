@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class FPSIndicator : MonoBehaviour {
-
-
+    
     float deltaTime = 0.0f;
     float fps = 0.0f;
 
